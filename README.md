@@ -7,7 +7,7 @@ This is intentionally an early proof of concept. It can use Sound Blocks as clie
 ## Features
 
 - Configurable stream URL.
-- Volume slider.
+- Volume slider. The default is `0.15` because internet radio streams are usually mastered louder than Space Engineers ambience.
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
 - Fixed playback toggle hotkey: `Ctrl+Alt+F`.
