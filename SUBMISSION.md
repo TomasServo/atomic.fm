@@ -4,6 +4,14 @@ This checklist is for preparing `atomic.fm` for the Space Engineers 1 Pulsar Plu
 
 `atomic.fm` is a Pulsar client plugin, not a Steam Workshop mod. Submit it to the `Plugins` folder in PluginHub. Do not use `Plugins/Mods`, `SampleMod.xml`, or a Workshop ID for this plugin.
 
+PluginHub repository:
+
+```text
+https://github.com/StarCpt/PluginHub
+```
+
+This is the PluginHub for Space Engineers 1. Space Engineers 2 uses a different PluginHub repository.
+
 ## Pulsar paths
 
 - Main install: `%AppData%\Pulsar`
@@ -118,22 +126,24 @@ Before submitting, confirm these fields are correct:
 
 ## PluginHub submission
 
-This is the public release path for a Pulsar plugin:
+This is the public release path for a Pulsar plugin, matching the PluginHub TLDR:
 
-1. Fork `https://github.com/StarCpt/PluginHub`.
-2. Clone your fork with Git.
-3. Check whether `atomic.fm` is already present in the `Plugins` folder.
-4. Create a branch from `main`.
-5. Copy `AtomicRadio.xml` into the fork as:
+1. Confirm the code is public on GitHub at `https://github.com/TomasServo/atomic.fm`.
+2. Fork `https://github.com/StarCpt/PluginHub`.
+3. Clone your fork with Git.
+4. Check whether `atomic.fm` is already present in the `Plugins` folder.
+5. Create a branch from `main`.
+6. Copy `AtomicRadio.xml` into the fork as:
 
 ```text
 Plugins/atomic.fm.xml
 ```
 
-6. Commit the new XML file.
-7. Push the branch.
-8. Open a PR to `StarCpt/PluginHub`.
-9. Wait for human review and merge.
+7. Compare it against `SamplePlugin.xml` if you need a reference.
+8. Commit the new XML file.
+9. Push the branch.
+10. Open a PR to `StarCpt/PluginHub`.
+11. Wait for human review and merge.
 
 The PR will involve a human review of the XML and source code, so expect review feedback before merge.
 
