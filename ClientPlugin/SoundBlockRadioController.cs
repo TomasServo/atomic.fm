@@ -1,4 +1,5 @@
 using Sandbox.ModAPI;
+using Sandbox.Game.Entities;
 using SpaceEngineers.Game.ModAPI;
 using System;
 using System.Collections.Generic;
@@ -82,15 +83,21 @@ namespace ClientPlugin
             {
                 MyAPIGateway.Entities.GetEntities(entities, entity =>
                 {
-                    IMySoundBlock speaker = entity as IMySoundBlock;
-                    return speaker != null && IsUsableSpeaker(speaker, tag);
+                    return entity is MyCubeGrid;
                 });
 
                 foreach (IMyEntity entity in entities)
                 {
-                    IMySoundBlock speaker = entity as IMySoundBlock;
-                    if (speaker != null)
-                        speakers.Add(speaker);
+                    MyCubeGrid grid = entity as MyCubeGrid;
+                    if (grid == null || grid.MarkedForClose || grid.Closed)
+                        continue;
+
+                    foreach (var fatBlock in grid.GetFatBlocks())
+                    {
+                        IMySoundBlock speaker = fatBlock as IMySoundBlock;
+                        if (speaker != null && IsUsableSpeaker(speaker, tag))
+                            speakers.Add(speaker);
+                    }
                 }
             }
             catch (Exception ex)
