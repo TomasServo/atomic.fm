@@ -11,7 +11,7 @@ This is intentionally an early proof of concept. It can use Sound Blocks as clie
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
 - Fixed playback toggle hotkey: `Ctrl+Alt+F`.
-- Optional Sound Block speaker mode. Mark Sound Blocks with `atomic.fm=true` in Custom Data, or name them with `[atomic.fm]`, to make them local radio speaker anchors.
+- Optional block speaker mode. Mark a Sound Block, planter, or other terminal block with `atomic.fm=true` in Custom Data to make it a local radio anchor.
 - NAudio-backed playback using Windows Media Foundation.
 
 ## Requirements
@@ -56,17 +56,25 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 6. Open the plugin config dialog.
 7. Press `Start atomic.fm`, or use `Ctrl+Alt+F`.
 
-### Sound Block speaker mode
+### Block speaker mode
 
-The plugin is still client-side. It does not replace vanilla Sound Block audio or broadcast audio through the server. Instead, tagged Sound Blocks act as local speaker anchors for the player's own client.
+The plugin is still client-side. It does not replace vanilla Sound Block audio or broadcast audio through the server. Instead, tagged blocks act as local speaker anchors for the player's own client.
 
-1. Place one or more Sound Blocks.
-2. Add `atomic.fm=true` to each Sound Block's Custom Data, or add `[atomic.fm]` to its name.
-3. Make sure the Sound Blocks are enabled, functional, and powered.
-4. Set each Sound Block's volume and range.
+1. Place one or more Sound Blocks, planters, or other terminal blocks.
+2. Add the radio marker to each anchor block's Custom Data.
+3. Make sure the anchor blocks are enabled, functional, and powered when the block type supports that.
+4. Set range and volume in Custom Data. Sound Blocks can also use their own volume and range sliders.
 5. Start atomic.fm with `Ctrl+Alt+F`.
 
-When Sound Block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged Sound Block. If no tagged Sound Blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
+For a planter-based radio source, use:
+
+```text
+atomic.fm=true
+atomic.fm.range=35
+atomic.fm.volume=0.20
+```
+
+When block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged anchor block. If no tagged blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 
