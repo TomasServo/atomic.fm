@@ -14,21 +14,25 @@ atomic.fm streams a configurable Icecast URL through the local Windows audio dev
 
 Any terminal block can be an atomic.fm sound source. You do not need to place a vanilla Sound Block. Planters, lights, antennas, LCDs, doors, cockpits, cargo containers, refineries, assemblers, and most functional blocks can act as radio anchors if they have Custom Data.
 
-Setup:
+To make a block emit atomic.fm:
 1. Enable atomic.fm in Pulsar.
-2. Open the terminal/control panel for the block you want to use as the radio source.
-3. Open that block's Custom Data field.
-4. Add this:
+2. Aim at the block and open the terminal/control panel.
+3. Select the exact block in the terminal list.
+4. Find the block's Custom Data field.
+5. Add the required marker on its own line:
    atomic.fm=true
+6. Optional: set how far away the block can be heard:
    atomic.fm.range=35
+7. Optional: set this block's loudness before distance fade:
    atomic.fm.volume=1.0
-5. Close the terminal and stand near the block.
-6. The stream starts automatically when atomic.fm finds a marked block.
+8. Close the terminal and stand near the block.
+9. The stream starts automatically when atomic.fm finds a marked block.
+10. Move away to hear distance fade. Turn around the block to hear left/right stereo panning.
 
 Custom Data options:
 - atomic.fm=true enables the block as a radio anchor.
-- atomic.fm.range sets the audible range in meters.
-- atomic.fm.volume sets that block's local loudness from 0.0 to 1.0.
+- atomic.fm.range sets the audible range in meters. Default fallback is 50.
+- atomic.fm.volume sets that block's local loudness from 0.0 to 1.0. Default is 1.0.
 
 Controls:
 - Ctrl+Alt+J toggles playback manually.

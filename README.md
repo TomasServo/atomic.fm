@@ -60,17 +60,29 @@ The plugin is still client-side. It does not replace vanilla Sound Block audio o
 
 You do not need to place a vanilla Sound Block. Any terminal block with Custom Data can act as an atomic.fm sound source, including planters, lights, antennas, LCDs, doors, cockpits, cargo containers, refineries, assemblers, and most functional blocks. Plain armor blocks cannot be used because they do not expose terminal Custom Data.
 
-1. Place or choose the block you want to act like the radio source.
-2. Open the block in the terminal/control panel.
-3. Open that block's Custom Data field.
-4. Add `atomic.fm=true`.
-5. Optionally add `atomic.fm.range` to set the audible range in meters.
-6. Optionally add `atomic.fm.volume` to set that block's local loudness from `0.0` to `1.0`.
-7. Make sure the block is enabled, functional, and powered when that block type supports those states.
-8. Close the terminal and stand near the block.
-9. atomic.fm starts automatically when a marked block is found. You can still use `Ctrl+Alt+J` or the settings buttons to toggle playback manually.
+To make a block emit atomic.fm:
 
-For a planter-based radio source, use:
+1. Aim at the block and open the terminal/control panel for that block.
+2. Select the exact block in the terminal list.
+3. Find the block's **Custom Data** field.
+4. Add the required marker on its own line:
+   ```text
+   atomic.fm=true
+   ```
+5. Optionally add a range line. This controls how far away the block can be heard:
+   ```text
+   atomic.fm.range=35
+   ```
+6. Optionally add a volume line. This controls this block's loudness before distance fade:
+   ```text
+   atomic.fm.volume=1.0
+   ```
+7. Close the terminal.
+8. Make sure the block is enabled, functional, and powered when that block type supports those states.
+9. Stand near the marked block. atomic.fm scans for marked blocks and starts automatically when one is found.
+10. Move away from the block to hear distance fade. Turn around the block to hear left/right stereo panning.
+
+Complete Custom Data example:
 
 ```text
 atomic.fm=true
@@ -83,9 +95,9 @@ When block speaker mode is enabled, the plugin periodically scans for marked blo
 Custom Data reference:
 
 ```text
-atomic.fm=true      Required. Enables this block as an atomic.fm anchor.
-atomic.fm.range=35  Optional. Audible range in meters.
-atomic.fm.volume=1  Optional. Anchor loudness from 0.0 to 1.0.
+atomic.fm=true       Required. Enables this block as an atomic.fm radio anchor.
+atomic.fm.range=35   Optional. Audible range in meters. Default fallback is 50.
+atomic.fm.volume=1.0 Optional. Anchor loudness from 0.0 to 1.0. Default is 1.0.
 ```
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
