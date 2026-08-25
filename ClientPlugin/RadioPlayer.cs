@@ -17,6 +17,7 @@ namespace ClientPlugin
         private Type waveOutType;
         private Type mediaFoundationReaderType;
         private Type waveProviderType;
+        private const float OutputGain = 0.25f;
 
         public bool IsPlaying { get; private set; }
 
@@ -147,7 +148,7 @@ namespace ClientPlugin
 
             var volumeProperty = output.GetType().GetProperty("Volume", BindingFlags.Instance | BindingFlags.Public);
             if (volumeProperty != null && volumeProperty.CanWrite)
-                volumeProperty.SetValue(output, Math.Max(0f, Math.Min(1f, requestedVolume)), null);
+                volumeProperty.SetValue(output, Math.Max(0f, Math.Min(1f, requestedVolume * OutputGain)), null);
         }
     }
 }

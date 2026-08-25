@@ -11,7 +11,7 @@ namespace ClientPlugin
         #region Options
 
         private string streamUrl = "http://radio.atomic.fm:8000/atomic-radio";
-        private float volume = 0.15f;
+        private float volume = 0.05f;
         private bool autoplay;
         private bool soundBlockMode = true;
         private string soundBlockTag = "[atomic.fm]";
@@ -31,7 +31,7 @@ namespace ClientPlugin
             set => SetField(ref streamUrl, value);
         }
 
-        [Slider(0f, 1f, 0.05f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0 to 1.")]
+        [Slider(0f, 1f, 0.01f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0 to 1. atomic.fm applies a quiet output pad after this setting.")]
         public float Volume
         {
             get => volume;

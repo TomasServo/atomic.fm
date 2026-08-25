@@ -205,7 +205,7 @@ namespace ClientPlugin
                 return Clamp01(customVolume);
 
             IMySoundBlock soundBlock = anchor as IMySoundBlock;
-            return soundBlock != null ? Clamp01(soundBlock.Volume) : 1f;
+            return soundBlock != null ? Clamp01(soundBlock.Volume) : 0.5f;
         }
 
         private static bool HasAtomicFmCustomData(string customData)
