@@ -2,8 +2,6 @@
 
 Client-side Space Engineers plugin prototype for Pulsar/Plugin Loader style clients. It streams an HTTP/HTTPS internet radio URL through the local Windows audio device.
 
-This is intentionally an early proof of concept. It can use marked blocks as client-side speaker anchors with NAudio volume fading and stereo panning, but it does not replace vanilla Sound Block audio, Jukeboxes, antennas, or server-side Space Engineers audio.
-
 ## Features
 
 - Configurable stream URL.
