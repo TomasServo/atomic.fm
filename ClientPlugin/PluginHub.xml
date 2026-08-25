@@ -4,7 +4,7 @@
   <GroupId>local/InternetRadio</GroupId>
   <FriendlyName>atomic.fm</FriendlyName>
   <Author>TomasServo</Author>
-  <Commit>local</Commit>
+  <Commit>c926ea346ab8f548bdcc6889950af66258056b3b</Commit>
   <SourceDirectories>
     <Directory>ClientPlugin</Directory>
   </SourceDirectories>
