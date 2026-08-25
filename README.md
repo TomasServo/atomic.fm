@@ -15,7 +15,7 @@ atomic.fm.range=35
 atomic.fm.volume=0.3
 ```
 
-5. Stand near the block. The station starts automatically.
+5. Press `Ctrl+Alt+M` or use **Start atomic.fm** in plugin settings. Stand near the block to hear it.
 
 Any terminal block with Custom Data can be a radio source. Planters, lights, LCDs, cockpits, cargo containers, refineries, assemblers, and most functional blocks work. Plain armor blocks do not.
 
@@ -24,7 +24,8 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 - `Ctrl+Alt+M`: toggle playback
 - `atomic.fm.range`: hearing range in meters
 - `atomic.fm.volume`: block volume from `0.0` to `1.0`; start around `0.3`
-- The opening menu is muted; playback becomes audible after a world loads.
+- atomic.fm is off when the game starts.
+- The opening menu is muted.
 - Default playback is intentionally quiet. Raise `Volume` or `atomic.fm.volume` if needed.
 
 ## Notes

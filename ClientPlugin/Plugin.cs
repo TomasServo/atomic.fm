@@ -19,7 +19,7 @@ namespace ClientPlugin
         private SoundBlockRadioController soundBlockController;
         private int framesUntilStatusNotification;
         private int framesUntilAmbientScan;
-        private bool manualStopRequested;
+        private bool manualStopRequested = true;
 
         private const int AmbientScanIntervalFrames = 300;
 
@@ -36,9 +36,6 @@ namespace ClientPlugin
             radioPlayer = new RadioPlayer();
             soundBlockController = new SoundBlockRadioController();
             Config.Current.PropertyChanged += OnConfigChanged;
-
-            if (Config.Current.Autoplay)
-                radioPlayer.Play(Config.Current.StreamUrl, soundBlockController.GetEffectiveVolume(Config.Current));
         }
 
         public void Dispose()

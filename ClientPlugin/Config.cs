@@ -12,7 +12,6 @@ namespace ClientPlugin
 
         private string streamUrl = "http://radio.atomic.fm:8000/atomic-radio";
         private float volume = 0.05f;
-        private bool autoplay;
         private bool soundBlockMode = true;
         private string soundBlockTag = "[atomic.fm]";
         private float fallbackSpeakerRange = 50f;
@@ -36,13 +35,6 @@ namespace ClientPlugin
         {
             get => volume;
             set => SetField(ref volume, value);
-        }
-
-        [Checkbox("Autoplay", description: "Start the configured stream when the plugin loads.")]
-        public bool Autoplay
-        {
-            get => autoplay;
-            set => SetField(ref autoplay, value);
         }
 
         [Checkbox("Block anchors", description: "Use blocks marked with atomic.fm=true in Custom Data as local radio speaker locations.")]
