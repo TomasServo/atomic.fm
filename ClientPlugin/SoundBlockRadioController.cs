@@ -37,6 +37,13 @@ namespace ClientPlugin
         {
             float baseVolume = Clamp01(config.Volume);
 
+            if (MyAPIGateway.Session == null || MyAPIGateway.Session.Camera == null)
+            {
+                lastPan = 0f;
+                lastVolumeMultiplier = 1f;
+                return Clamp(config.OpeningScreenVolume, 0f, 0.5f);
+            }
+
             if (!config.SoundBlockMode)
             {
                 lastPan = 0f;

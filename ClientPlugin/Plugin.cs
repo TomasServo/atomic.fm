@@ -38,7 +38,7 @@ namespace ClientPlugin
             Config.Current.PropertyChanged += OnConfigChanged;
 
             if (Config.Current.Autoplay)
-                radioPlayer.Play(Config.Current.StreamUrl, Config.Current.Volume);
+                radioPlayer.Play(Config.Current.StreamUrl, soundBlockController.GetEffectiveVolume(Config.Current));
         }
 
         public void Dispose()
@@ -100,7 +100,7 @@ namespace ClientPlugin
                 manualStopRequested = false;
                 framesUntilAmbientScan = AmbientScanIntervalFrames;
                 soundBlockController.ForceRefresh(Config.Current);
-                radioPlayer.Play(Config.Current.StreamUrl, Config.Current.Volume);
+                radioPlayer.Play(Config.Current.StreamUrl, soundBlockController.GetEffectiveVolume(Config.Current));
                 ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
             }
             catch (Exception ex)
