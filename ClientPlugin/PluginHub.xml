@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <PluginData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GitHubPlugin">
-  <Id>local/InternetRadio</Id>
-  <GroupId>local/InternetRadio</GroupId>
+  <Id>local/atomic.fm</Id>
+  <GroupId>local/atomic.fm</GroupId>
   <FriendlyName>atomic.fm</FriendlyName>
   <Author>TomasServo</Author>
   <Commit>c926ea346ab8f548bdcc6889950af66258056b3b</Commit>

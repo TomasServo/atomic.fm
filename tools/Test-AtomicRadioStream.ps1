@@ -1,5 +1,5 @@
 param(
-    [string]$Url = "http://3.140.179.166:8000/atomic-radio"
+    [string]$Url = "http://radio.atomic.fm:8000/atomic-radio"
 )
 
 $ErrorActionPreference = "Stop"
@@ -10,7 +10,7 @@ $request = [System.Net.HttpWebRequest]::Create($Url)
 $request.Method = "GET"
 $request.Timeout = 5000
 $request.ReadWriteTimeout = 5000
-$request.UserAgent = "AtomicRadioPreflight/1.0"
+$request.UserAgent = "atomic.fm-preflight/1.0"
 
 $response = $request.GetResponse()
 try {
