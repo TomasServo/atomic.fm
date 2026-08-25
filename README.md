@@ -21,7 +21,7 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 
 ## Controls
 
-- `Ctrl+Alt+J`: toggle playback
+- `Ctrl+Alt+M`: toggle playback
 - `atomic.fm.range`: hearing range in meters
 - `atomic.fm.volume`: block volume from `0.0` to `1.0`
 

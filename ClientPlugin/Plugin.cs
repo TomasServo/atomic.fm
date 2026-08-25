@@ -55,7 +55,7 @@ namespace ClientPlugin
         {
             if (MyInput.Static.IsAnyCtrlKeyPressed() &&
                 MyInput.Static.IsAnyAltKeyPressed() &&
-                MyInput.Static.IsNewKeyPressed(MyKeys.J))
+                MyInput.Static.IsNewKeyPressed(MyKeys.M))
             {
                 TogglePlayback();
             }
