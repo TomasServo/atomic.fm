@@ -3,7 +3,7 @@
   <Id>local/InternetRadio</Id>
   <GroupId>local/InternetRadio</GroupId>
   <FriendlyName>atomic.fm</FriendlyName>
-  <Author>Local development</Author>
+  <Author>TomasServo</Author>
   <Commit>local</Commit>
   <SourceDirectories>
     <Directory>ClientPlugin</Directory>

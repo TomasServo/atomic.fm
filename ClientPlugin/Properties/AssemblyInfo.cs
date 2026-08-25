@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("atomic.fm")]
 [assembly: AssemblyDescription("atomic.fm streaming plugin for Space Engineers client plugin loaders.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("TomasServo")]
 [assembly: AssemblyProduct("atomic.fm")]
-[assembly: AssemblyCopyright("Copyright © 2026")]
+[assembly: AssemblyCopyright("Copyright © 2026 TomasServo")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
