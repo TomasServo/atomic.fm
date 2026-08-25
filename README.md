@@ -13,7 +13,7 @@ Client-side Space Engineers plugin for Pulsar/Plugin Loader. It streams an HTTP/
 
 ## Requirements
 
-- Space Engineers 1 on Windows.
+- Space Engineers on Windows.
 - Pulsar or another compatible client plugin loader.
 - .NET Framework 4.8.1 Developer Pack for building.
 - A local Space Engineers install path containing `Bin64`.
