@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<PluginData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GitHubPlugin">
+  <Id>local/InternetRadio</Id>
+  <GroupId>local/InternetRadio</GroupId>
+  <FriendlyName>Internet Radio</FriendlyName>
+  <Author>Local development</Author>
+  <Commit>local</Commit>
+  <SourceDirectories>
+    <Directory>ClientPlugin</Directory>
+  </SourceDirectories>
+  <Tooltip>Streams a configurable internet radio URL from the Space Engineers client.</Tooltip>
+  <Description>
+Internet Radio is a prototype client-side plugin for Space Engineers plugin loaders such as Pulsar.
+
+It plays a configured HTTP/HTTPS stream through the local Windows audio device. This first version does not patch Space Engineers' positional audio or Sound Block system.
+  </Description>
+</PluginData>
