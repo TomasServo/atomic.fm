@@ -11,6 +11,7 @@ namespace ClientPlugin
 {
     internal sealed class SoundBlockRadioController
     {
+        private const string CustomDataKey = "atomic.fm";
         private const int ScanIntervalFrames = 60;
         private readonly HashSet<IMyEntity> entities = new HashSet<IMyEntity>();
         private readonly List<IMySoundBlock> speakers = new List<IMySoundBlock>();
@@ -120,7 +121,43 @@ namespace ClientPlugin
 
             string requiredTag = string.IsNullOrWhiteSpace(tag) ? "[atomic.fm]" : tag;
             string customName = speaker.CustomName?.ToString() ?? string.Empty;
-            return customName.IndexOf(requiredTag, StringComparison.OrdinalIgnoreCase) >= 0;
+            if (customName.IndexOf(requiredTag, StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+
+            return HasAtomicFmCustomData(speaker.CustomData);
+        }
+
+        private static bool HasAtomicFmCustomData(string customData)
+        {
+            if (string.IsNullOrWhiteSpace(customData))
+                return false;
+
+            string[] lines = customData.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+            foreach (string rawLine in lines)
+            {
+                string line = rawLine.Trim();
+                if (line.Length == 0 || line.StartsWith("#") || line.StartsWith(";") || line.StartsWith("//"))
+                    continue;
+
+                int separatorIndex = line.IndexOf('=');
+                if (separatorIndex < 0)
+                    separatorIndex = line.IndexOf(':');
+
+                if (separatorIndex < 0)
+                    continue;
+
+                string key = line.Substring(0, separatorIndex).Trim();
+                if (!key.Equals(CustomDataKey, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                string value = line.Substring(separatorIndex + 1).Trim();
+                return value.Equals("true", StringComparison.OrdinalIgnoreCase) ||
+                    value.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
+                    value.Equals("on", StringComparison.OrdinalIgnoreCase) ||
+                    value.Equals("1", StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
         }
 
         private static float Smooth(float current, float target, float factor)

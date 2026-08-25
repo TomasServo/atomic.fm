@@ -2,7 +2,7 @@
 
 Client-side Space Engineers plugin prototype for Pulsar/Plugin Loader style clients. It streams an HTTP/HTTPS internet radio URL through the local Windows audio device.
 
-This is intentionally a first-stage proof of concept. It does not hook into Sound Blocks, Jukeboxes, antennas, or Space Engineers positional audio yet.
+This is intentionally an early proof of concept. It can use Sound Blocks as client-side speaker anchors, but it does not replace vanilla Sound Block audio, Jukeboxes, antennas, or Space Engineers positional audio.
 
 ## Features
 
@@ -11,7 +11,7 @@ This is intentionally a first-stage proof of concept. It does not hook into Soun
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
 - Fixed playback toggle hotkey: `Ctrl+Alt+F`.
-- Optional Sound Block speaker mode. Name Sound Blocks with `[atomic.fm]` to make them local radio speaker anchors.
+- Optional Sound Block speaker mode. Mark Sound Blocks with `atomic.fm=true` in Custom Data, or name them with `[atomic.fm]`, to make them local radio speaker anchors.
 - NAudio-backed playback using Windows Media Foundation.
 
 ## Requirements
@@ -61,7 +61,7 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 The plugin is still client-side. It does not replace vanilla Sound Block audio or broadcast audio through the server. Instead, tagged Sound Blocks act as local speaker anchors for the player's own client.
 
 1. Place one or more Sound Blocks.
-2. Add `[atomic.fm]` to each Sound Block name.
+2. Add `atomic.fm=true` to each Sound Block's Custom Data, or add `[atomic.fm]` to its name.
 3. Make sure the Sound Blocks are enabled, functional, and powered.
 4. Set each Sound Block's volume and range.
 5. Start atomic.fm with `Ctrl+Alt+F`.
