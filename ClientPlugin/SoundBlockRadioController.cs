@@ -37,7 +37,7 @@ namespace ClientPlugin
         {
             float baseVolume = Clamp01(config.Volume);
 
-            if (MyAPIGateway.Session == null || MyAPIGateway.Session.Camera == null)
+            if (MyAPIGateway.Session == null)
             {
                 lastPan = 0f;
                 lastVolumeMultiplier = 1f;
@@ -57,12 +57,6 @@ namespace ClientPlugin
 
         private float GetSpeakerMultiplier(Config config)
         {
-            if (MyAPIGateway.Session == null || MyAPIGateway.Session.Camera == null)
-            {
-                lastPan = 0f;
-                return 1f;
-            }
-
             if (--framesUntilScan <= 0)
             {
                 framesUntilScan = ScanIntervalFrames;
@@ -75,7 +69,13 @@ namespace ClientPlugin
                 return 1f;
             }
 
-            Vector3D listenerPosition = MyAPIGateway.Session.Camera.Position;
+            Vector3D listenerPosition;
+            if (!TryGetListenerPosition(out listenerPosition))
+            {
+                lastPan = 0f;
+                return config.MuteOutsideSpeakerRange ? 0f : 1f;
+            }
+
             float strongest = 0f;
             float selectedPan = 0f;
             double nearestDistance = double.MaxValue;
@@ -120,14 +120,59 @@ namespace ClientPlugin
 
         private static float CalculatePan(Vector3D listenerPosition, Vector3D anchorPosition)
         {
+            Vector3D right;
+            if (!TryGetListenerRight(out right))
+                return 0f;
+
             Vector3D toAnchor = anchorPosition - listenerPosition;
             double distance = toAnchor.Length();
             if (distance <= 0.001d)
                 return 0f;
 
             Vector3D direction = toAnchor / distance;
-            Vector3D right = MyAPIGateway.Session.Camera.WorldMatrix.Right;
             return Clamp((float)Vector3D.Dot(direction, right), -1f, 1f);
+        }
+
+        private static bool TryGetListenerPosition(out Vector3D position)
+        {
+            position = Vector3D.Zero;
+
+            if (MyAPIGateway.Session == null)
+                return false;
+
+            if (MyAPIGateway.Session.Camera != null)
+            {
+                position = MyAPIGateway.Session.Camera.Position;
+                return true;
+            }
+
+            IMyEntity controlledEntity = MyAPIGateway.Session.Player?.Controller?.ControlledEntity?.Entity;
+            if (controlledEntity == null)
+                return false;
+
+            position = controlledEntity.GetPosition();
+            return true;
+        }
+
+        private static bool TryGetListenerRight(out Vector3D right)
+        {
+            right = Vector3D.Right;
+
+            if (MyAPIGateway.Session == null)
+                return false;
+
+            if (MyAPIGateway.Session.Camera != null)
+            {
+                right = MyAPIGateway.Session.Camera.WorldMatrix.Right;
+                return true;
+            }
+
+            IMyEntity controlledEntity = MyAPIGateway.Session.Player?.Controller?.ControlledEntity?.Entity;
+            if (controlledEntity == null)
+                return false;
+
+            right = controlledEntity.WorldMatrix.Right;
+            return true;
         }
 
         private void RefreshAnchors(string tag)

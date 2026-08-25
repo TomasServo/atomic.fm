@@ -193,7 +193,7 @@ namespace ClientPlugin
 
         private static bool IsGameSessionReady()
         {
-            return MyAPIGateway.Session != null && MyAPIGateway.Session.Camera != null;
+            return MyAPIGateway.Session != null;
         }
     }
 }
