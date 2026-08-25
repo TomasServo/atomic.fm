@@ -29,4 +29,4 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 
 - Audio is client-side; each player chooses whether to install and enable the plugin.
 - Marked blocks provide distance fade and left/right stereo panning.
-- The default stream is `http://3.140.179.166:8000/atomic-radio`.
+- The stream URL can be changed from the Pulsar plugin settings.

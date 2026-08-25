@@ -19,5 +19,5 @@ The stream starts automatically near marked blocks with distance fade. Plain arm
     <PackageReference Include="NAudio" Version="2.2.1" />
   </NuGetReferences>
   <Hidden>false</Hidden>
-  <Commit>0bb77d43110917d8f7d2dbb8e27abf70b0e9d2e9</Commit>
+  <Commit>8d4d0571727a53c38824070f1a018a77fb34da98</Commit>
 </PluginData>
