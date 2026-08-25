@@ -50,6 +50,14 @@ namespace ClientPlugin
 
         public void Update()
         {
+            if (!IsGameSessionReady())
+            {
+                if (radioPlayer != null && radioPlayer.IsPlaying)
+                    StopPlayback(showNotification: false);
+
+                return;
+            }
+
             if (MyInput.Static.IsAnyCtrlKeyPressed() &&
                 MyInput.Static.IsAnyAltKeyPressed() &&
                 MyInput.Static.IsNewKeyPressed(MyKeys.M))
@@ -92,6 +100,13 @@ namespace ClientPlugin
             if (radioPlayer == null)
                 return;
 
+            if (!IsGameSessionReady())
+            {
+                manualStopRequested = true;
+                radioPlayer.Stop();
+                return;
+            }
+
             try
             {
                 manualStopRequested = false;
@@ -111,9 +126,15 @@ namespace ClientPlugin
 
         public void StopPlayback()
         {
+            StopPlayback(showNotification: true);
+        }
+
+        private void StopPlayback(bool showNotification)
+        {
             manualStopRequested = true;
             radioPlayer?.Stop();
-            ShowNotification("atomic.fm stopped", 2000);
+            if (showNotification)
+                ShowNotification("atomic.fm stopped", 2000);
         }
 
         private void TryStartAmbientPlayback()
@@ -168,6 +189,11 @@ namespace ClientPlugin
             {
                 MyLog.Default.WriteLine($"{Name}: notification failed: {ex.Message}");
             }
+        }
+
+        private static bool IsGameSessionReady()
+        {
+            return MyAPIGateway.Session != null && MyAPIGateway.Session.Camera != null;
         }
     }
 }
