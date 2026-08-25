@@ -11,7 +11,7 @@ namespace ClientPlugin
     // ReSharper disable once UnusedType.Global
     public class Plugin : IPlugin, IDisposable
     {
-        public const string Name = "InternetRadio";
+        public const string Name = "atomic.fm";
         public static Plugin Instance { get; private set; }
         private SettingsGenerator settingsGenerator;
         private RadioPlayer radioPlayer;
@@ -76,10 +76,10 @@ namespace ClientPlugin
             }
             catch (Exception ex)
             {
-                MyLog.Default.Error($"{Name}: Failed to start radio: {ex}");
+                MyLog.Default.Error($"{Name}: Failed to start stream: {ex}");
                 MyGuiSandbox.AddScreen(MyGuiSandbox.CreateMessageBox(
                     messageText: new System.Text.StringBuilder(ex.Message),
-                    messageCaption: new System.Text.StringBuilder("Internet Radio")));
+                    messageCaption: new System.Text.StringBuilder("atomic.fm")));
             }
         }
 

@@ -1,4 +1,4 @@
-# Atomic Radio for Space Engineers
+# atomic.fm for Space Engineers
 
 Client-side Space Engineers plugin prototype for Pulsar/Plugin Loader style clients. It streams an HTTP/HTTPS internet radio URL through the local Windows audio device.
 
@@ -50,10 +50,10 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 1. Start Space Engineers through Pulsar.
 2. If the plugin is not published yet, start Pulsar with `-sources`, open **Sources**, and add this repository as a development folder.
 3. Select `AtomicRadio.xml` as the plugin registration file when Pulsar asks for plugin metadata.
-4. Enable `Atomic Radio` from the plugin list.
+4. Enable `atomic.fm` from the plugin list.
 5. Restart if the loader asks you to.
 6. Open the plugin config dialog.
-7. Press `Start Radio`, or use `Ctrl+Alt+R`.
+7. Press `Start atomic.fm`, or use `Ctrl+Alt+R`.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 

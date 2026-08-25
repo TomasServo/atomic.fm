@@ -18,7 +18,7 @@ namespace ClientPlugin
 
         #region User interface
 
-        public readonly string Title = "Atomic Radio";
+        public readonly string Title = "atomic.fm";
 
         [Textbox("Stream URL", description: "HTTP or HTTPS MP3/AAC stream URL.")]
         public string StreamUrl
@@ -41,13 +41,13 @@ namespace ClientPlugin
             set => SetField(ref autoplay, value);
         }
 
-        [Button("Start Radio", description: "Start streaming the configured station.")]
+        [Button("Start atomic.fm", description: "Start streaming the configured station.")]
         public void StartRadio()
         {
             Plugin.Instance?.StartPlayback();
         }
 
-        [Button("Stop Radio", description: "Stop radio playback.")]
+        [Button("Stop atomic.fm", description: "Stop radio playback.")]
         public void StopRadio()
         {
             Plugin.Instance?.StopPlayback();

@@ -2,10 +2,10 @@
 <PluginData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GitHubPlugin">
   <Id>TomasServo/Atomic-Radio</Id>
   <RepoId>TomasServo/Atomic-Radio</RepoId>
-  <FriendlyName>Atomic Radio</FriendlyName>
+  <FriendlyName>atomic.fm</FriendlyName>
   <Author>TomasServo</Author>
-  <Tooltip>Streams Atomic Radio from Icecast into the Space Engineers client.</Tooltip>
-  <Description>Atomic Radio streams a configurable Icecast URL through the local Windows audio device. The default stream URL targets the SAM Broadcaster to Icecast mount at /atomic-radio.</Description>
+  <Tooltip>Streams atomic.fm from Icecast into the Space Engineers client.</Tooltip>
+  <Description>atomic.fm streams a configurable Icecast URL through the local Windows audio device. The default stream URL targets the SAM Broadcaster to Icecast mount at /atomic-radio.</Description>
   <SourceDirectories>
     <Directory>ClientPlugin</Directory>
   </SourceDirectories>

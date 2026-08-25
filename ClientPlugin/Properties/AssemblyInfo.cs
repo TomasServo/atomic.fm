@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("InternetRadio")]
-[assembly: AssemblyDescription("Internet radio streaming plugin for Space Engineers client plugin loaders.")]
+[assembly: AssemblyTitle("atomic.fm")]
+[assembly: AssemblyDescription("atomic.fm streaming plugin for Space Engineers client plugin loaders.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("InternetRadio")]
+[assembly: AssemblyProduct("atomic.fm")]
 [assembly: AssemblyCopyright("Copyright © 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
