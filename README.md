@@ -33,3 +33,4 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 - Audio is client-side; each player chooses whether to install and enable the plugin.
 - Marked blocks provide distance fade and left/right stereo panning.
 - The stream URL can be changed from the Pulsar plugin settings.
+- Pulsar release testing and PluginHub submission steps are in [SUBMISSION.md](SUBMISSION.md).
