@@ -1,4 +1,4 @@
-# Internet Radio for Space Engineers
+# Atomic Radio for Space Engineers
 
 Client-side Space Engineers plugin prototype for Pulsar/Plugin Loader style clients. It streams an HTTP/HTTPS internet radio URL through the local Windows audio device.
 
@@ -53,13 +53,41 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 4. Open the plugin config dialog.
 5. Press `Start Radio`, or use `Ctrl+Alt+R`.
 
-The default stream URL is:
+The default stream URL is your Icecast mount fed by SAM Broadcaster:
 
 ```text
-https://icecast.radiofrance.fr/fip-midfi.mp3
+http://3.140.179.166:8000/atomic-radio
 ```
 
-Replace it with your station URL once basic playback works.
+Before launching the plugin, confirm the stream is live in a browser or media player.
+
+From PowerShell, you can also run:
+
+```powershell
+.\tools\Test-AtomicRadioStream.ps1
+```
+
+## SAM Broadcaster to Icecast
+
+SAM Broadcaster is the source client. Icecast is the transmitter. Use these SAM server settings:
+
+```text
+Server Type: IceCast
+IceCast 2: selected
+Server IP: 3.140.179.166
+Server Port: 8000
+Username: source
+Password: <your Icecast source-password>
+Mount: /atomic-radio
+```
+
+On the Icecast server, verify the mount is connected:
+
+```bash
+curl http://localhost:8000/status-json.xsl
+```
+
+The JSON should contain a source entry for `/atomic-radio`.
 
 ## Known Limitations
 

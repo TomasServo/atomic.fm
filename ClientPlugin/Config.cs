@@ -11,7 +11,7 @@ namespace ClientPlugin
     {
         #region Options
 
-        private string streamUrl = "https://icecast.radiofrance.fr/fip-midfi.mp3";
+        private string streamUrl = "http://3.140.179.166:8000/atomic-radio";
         private float volume = 0.35f;
         private bool autoplay;
         private Binding togglePlaybackKey = new Binding(MyKeys.R, ctrl: true, alt: true);
@@ -20,7 +20,7 @@ namespace ClientPlugin
 
         #region User interface
 
-        public readonly string Title = "Internet Radio";
+        public readonly string Title = "Atomic Radio";
 
         [Textbox("Stream URL", description: "HTTP or HTTPS MP3/AAC stream URL.")]
         public string StreamUrl
