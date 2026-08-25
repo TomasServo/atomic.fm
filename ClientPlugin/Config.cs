@@ -11,7 +11,7 @@ namespace ClientPlugin
         #region Options
 
         private string streamUrl = "http://radio.atomic.fm:8000/atomic-radio";
-        private float volume = 0.05f;
+        private float volume = 0.2f;
         private bool soundBlockMode = true;
         private string soundBlockTag = "[atomic.fm]";
         private float fallbackSpeakerRange = 50f;

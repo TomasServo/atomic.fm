@@ -26,7 +26,7 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 - `atomic.fm.volume`: block volume from `0.0` to `1.0`; start around `0.3`
 - atomic.fm is off when the game starts.
 - The opening menu is muted.
-- Default playback is intentionally quiet. Raise `Volume` or `atomic.fm.volume` if needed.
+- Default plugin volume is `0.2`. Raise `Volume` or `atomic.fm.volume` if needed.
 
 ## Notes
 
