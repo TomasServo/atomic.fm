@@ -45,28 +45,28 @@ namespace ClientPlugin
             set => SetField(ref autoplay, value);
         }
 
-        [Checkbox("Sound Block speakers", description: "Use tagged Sound Blocks as local radio speaker locations.")]
+        [Checkbox("Block anchors", description: "Use blocks marked with atomic.fm=true in Custom Data as local radio speaker locations.")]
         public bool SoundBlockMode
         {
             get => soundBlockMode;
             set => SetField(ref soundBlockMode, value);
         }
 
-        [Textbox("Sound Block tag", description: "Sound Blocks whose name contains this tag act as atomic.fm speakers.")]
+        [Textbox("Name fallback tag", description: "Blocks whose name contains this tag also act as atomic.fm anchors.")]
         public string SoundBlockTag
         {
             get => soundBlockTag;
             set => SetField(ref soundBlockTag, value);
         }
 
-        [Slider(5f, 200f, 5f, SliderAttribute.SliderType.Float, label: "Fallback range", description: "Range in meters used when a tagged Sound Block has no usable range value.")]
+        [Slider(5f, 200f, 5f, SliderAttribute.SliderType.Float, label: "Fallback range", description: "Range in meters used when a marked block has no atomic.fm.range value.")]
         public float FallbackSpeakerRange
         {
             get => fallbackSpeakerRange;
             set => SetField(ref fallbackSpeakerRange, value);
         }
 
-        [Checkbox("Mute out of range", description: "Keep the stream running but mute it when no tagged Sound Block is nearby.")]
+        [Checkbox("Mute out of range", description: "Keep the stream running but mute it when no marked block anchor is nearby.")]
         public bool MuteOutsideSpeakerRange
         {
             get => muteOutsideSpeakerRange;

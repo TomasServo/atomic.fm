@@ -11,7 +11,7 @@ This is intentionally an early proof of concept. It can use Sound Blocks as clie
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
 - Fixed playback toggle hotkey: `Ctrl+Alt+F`.
-- Optional block speaker mode. Mark a Sound Block, planter, or other terminal block with `atomic.fm=true` in Custom Data to make it a local radio anchor.
+- Optional block anchor mode. Any terminal block with `atomic.fm=true` in Custom Data can act as a local atomic.fm radio source.
 - NAudio-backed playback using Windows Media Foundation.
 
 ## Requirements
@@ -60,7 +60,7 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 
 The plugin is still client-side. It does not replace vanilla Sound Block audio or broadcast audio through the server. Instead, tagged blocks act as local speaker anchors for the player's own client.
 
-1. Place one or more Sound Blocks, planters, or other terminal blocks.
+1. Place one or more terminal blocks, such as planters, lights, antennas, LCDs, or Sound Blocks.
 2. Add the radio marker to each anchor block's Custom Data.
 3. Make sure the anchor blocks are enabled, functional, and powered when the block type supports that.
 4. Set range and volume in Custom Data. Sound Blocks can also use their own volume and range sliders.
