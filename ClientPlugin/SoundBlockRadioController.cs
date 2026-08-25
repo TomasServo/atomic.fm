@@ -69,9 +69,6 @@ namespace ClientPlugin
                 strongest = Math.Max(strongest, distanceFactor * anchorVolume);
             }
 
-            if (strongest <= 0f && !config.MuteOutsideSpeakerRange)
-                return 1f;
-
             return Clamp01(strongest);
         }
 

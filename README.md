@@ -71,10 +71,10 @@ For a planter-based radio source, use:
 ```text
 atomic.fm=true
 atomic.fm.range=35
-atomic.fm.volume=0.20
+atomic.fm.volume=1.0
 ```
 
-When block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged anchor block. If no tagged blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
+When block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged anchor block. If no tagged blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. If tagged blocks exist and the player is outside their range, the stream fades out. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 
