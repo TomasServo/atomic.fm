@@ -39,8 +39,12 @@ namespace ClientPlugin
 
         public void Update()
         {
-            if (Config.Current.TogglePlaybackKey.HasPressed(MyInput.Static))
+            if (MyInput.Static.IsAnyCtrlKeyPressed() &&
+                MyInput.Static.IsAnyAltKeyPressed() &&
+                MyInput.Static.IsNewKeyPressed(MyKeys.R))
+            {
                 TogglePlayback();
+            }
         }
 
         // ReSharper disable once UnusedMember.Global

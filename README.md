@@ -10,7 +10,7 @@ This is intentionally a first-stage proof of concept. It does not hook into Soun
 - Volume slider.
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
-- Toggle keybind, default `Ctrl+Alt+R`.
+- Fixed playback toggle hotkey: `Ctrl+Alt+R`.
 - NAudio-backed playback using Windows Media Foundation.
 
 ## Requirements

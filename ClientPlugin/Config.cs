@@ -3,7 +3,6 @@ using ClientPlugin.Settings.Elements;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using VRage.Input;
 
 namespace ClientPlugin
 {
@@ -14,7 +13,6 @@ namespace ClientPlugin
         private string streamUrl = "http://3.140.179.166:8000/atomic-radio";
         private float volume = 0.35f;
         private bool autoplay;
-        private Binding togglePlaybackKey = new Binding(MyKeys.R, ctrl: true, alt: true);
 
         #endregion
 
@@ -41,13 +39,6 @@ namespace ClientPlugin
         {
             get => autoplay;
             set => SetField(ref autoplay, value);
-        }
-
-        [Keybind("Toggle Key", description: "Press this keybind in game to start or stop the stream. Unbind by right clicking the button.")]
-        public Binding TogglePlaybackKey
-        {
-            get => togglePlaybackKey;
-            set => SetField(ref togglePlaybackKey, value);
         }
 
         [Button("Start Radio", description: "Start streaming the configured station.")]
