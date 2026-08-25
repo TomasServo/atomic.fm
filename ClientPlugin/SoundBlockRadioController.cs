@@ -20,6 +20,17 @@ namespace ClientPlugin
         private int framesUntilScan;
         private float lastVolumeMultiplier = 1f;
 
+        public int AnchorCount => anchors.Count;
+        public string NearestAnchorName { get; private set; } = string.Empty;
+        public double NearestAnchorDistance { get; private set; }
+        public float LastVolumeMultiplier => lastVolumeMultiplier;
+
+        public void ForceRefresh(Config config)
+        {
+            RefreshAnchors(config.SoundBlockTag);
+            framesUntilScan = ScanIntervalFrames;
+        }
+
         public float GetEffectiveVolume(Config config)
         {
             float baseVolume = Clamp01(config.Volume);
@@ -40,7 +51,7 @@ namespace ClientPlugin
             if (--framesUntilScan <= 0)
             {
                 framesUntilScan = ScanIntervalFrames;
-                RefreshSpeakers(config.SoundBlockTag);
+                RefreshAnchors(config.SoundBlockTag);
             }
 
             if (anchors.Count == 0)
@@ -48,6 +59,8 @@ namespace ClientPlugin
 
             Vector3D listenerPosition = MyAPIGateway.Session.Camera.Position;
             float strongest = 0f;
+            double nearestDistance = double.MaxValue;
+            string nearestName = string.Empty;
 
             for (int i = anchors.Count - 1; i >= 0; i--)
             {
@@ -61,6 +74,12 @@ namespace ClientPlugin
                 float range = GetAnchorRange(anchor, config.FallbackSpeakerRange);
 
                 double distance = Vector3D.Distance(listenerPosition, anchor.GetPosition());
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestName = anchor.CustomName?.ToString() ?? anchor.DisplayNameText ?? "marked block";
+                }
+
                 if (distance > range)
                     continue;
 
@@ -69,10 +88,12 @@ namespace ClientPlugin
                 strongest = Math.Max(strongest, distanceFactor * anchorVolume);
             }
 
+            NearestAnchorName = nearestName;
+            NearestAnchorDistance = nearestDistance == double.MaxValue ? 0d : nearestDistance;
             return Clamp01(strongest);
         }
 
-        private void RefreshSpeakers(string tag)
+        private void RefreshAnchors(string tag)
         {
             anchors.Clear();
             entities.Clear();
@@ -97,6 +118,8 @@ namespace ClientPlugin
                             anchors.Add(anchor);
                     }
                 }
+
+                MyLog.Default.WriteLine($"{Plugin.Name}: radio anchors found: {anchors.Count}");
             }
             catch (Exception ex)
             {

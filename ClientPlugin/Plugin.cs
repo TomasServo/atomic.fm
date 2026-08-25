@@ -1,6 +1,7 @@
 using System;
 using ClientPlugin.Settings;
 using ClientPlugin.Settings.Layouts;
+using Sandbox.ModAPI;
 using Sandbox.Graphics.GUI;
 using VRage.Input;
 using VRage.Plugins;
@@ -16,6 +17,7 @@ namespace ClientPlugin
         private SettingsGenerator settingsGenerator;
         private RadioPlayer radioPlayer;
         private SoundBlockRadioController soundBlockController;
+        private int framesUntilStatusNotification;
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         public void Init(object gameInstance)
@@ -44,13 +46,16 @@ namespace ClientPlugin
         {
             if (MyInput.Static.IsAnyCtrlKeyPressed() &&
                 MyInput.Static.IsAnyAltKeyPressed() &&
-                MyInput.Static.IsNewKeyPressed(MyKeys.F))
+                MyInput.Static.IsNewKeyPressed(MyKeys.J))
             {
                 TogglePlayback();
             }
 
             if (radioPlayer != null && radioPlayer.IsPlaying)
+            {
                 radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+                ShowAnchorStatusPeriodically();
+            }
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -78,7 +83,9 @@ namespace ClientPlugin
 
             try
             {
+                soundBlockController.ForceRefresh(Config.Current);
                 radioPlayer.Play(Config.Current.StreamUrl, Config.Current.Volume);
+                ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
             }
             catch (Exception ex)
             {
@@ -92,12 +99,42 @@ namespace ClientPlugin
         public void StopPlayback()
         {
             radioPlayer?.Stop();
+            ShowNotification("atomic.fm stopped", 2000);
         }
 
         private void OnConfigChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (radioPlayer != null)
                 radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+        }
+
+        private void ShowAnchorStatusPeriodically()
+        {
+            if (--framesUntilStatusNotification > 0)
+                return;
+
+            framesUntilStatusNotification = 600;
+            if (soundBlockController.AnchorCount <= 0)
+            {
+                ShowNotification("atomic.fm: no block anchors found", 2500);
+                return;
+            }
+
+            ShowNotification(
+                $"atomic.fm: {soundBlockController.AnchorCount} anchor(s), nearest {soundBlockController.NearestAnchorDistance:0}m, volume {soundBlockController.LastVolumeMultiplier:0.00}",
+                2500);
+        }
+
+        private static void ShowNotification(string message, int aliveTimeMs)
+        {
+            try
+            {
+                MyAPIGateway.Utilities?.ShowNotification(message, aliveTimeMs, "White");
+            }
+            catch (Exception ex)
+            {
+                MyLog.Default.WriteLine($"{Name}: notification failed: {ex.Message}");
+            }
         }
     }
 }

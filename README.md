@@ -10,7 +10,7 @@ This is intentionally an early proof of concept. It can use Sound Blocks as clie
 - Volume slider. The default is `0.15` because internet radio streams are usually mastered louder than Space Engineers ambience.
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
-- Fixed playback toggle hotkey: `Ctrl+Alt+F`.
+- Fixed playback toggle hotkey: `Ctrl+Alt+J`.
 - Optional block anchor mode. Any terminal block with `atomic.fm=true` in Custom Data can act as a local atomic.fm radio source.
 - NAudio-backed playback using Windows Media Foundation.
 
@@ -54,7 +54,7 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 4. Enable `atomic.fm` from the plugin list.
 5. Restart if the loader asks you to.
 6. Open the plugin config dialog.
-7. Press `Start atomic.fm`, or use `Ctrl+Alt+F`.
+7. Press `Start atomic.fm`, or use `Ctrl+Alt+J`.
 
 ### Block speaker mode
 
@@ -64,7 +64,7 @@ The plugin is still client-side. It does not replace vanilla Sound Block audio o
 2. Add the radio marker to each anchor block's Custom Data.
 3. Make sure the anchor blocks are enabled, functional, and powered when the block type supports that.
 4. Set range and volume in Custom Data. Sound Blocks can also use their own volume and range sliders.
-5. Start atomic.fm with `Ctrl+Alt+F`.
+5. Start atomic.fm with `Ctrl+Alt+J`.
 
 For a planter-based radio source, use:
 
