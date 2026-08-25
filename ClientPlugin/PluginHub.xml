@@ -10,8 +10,20 @@
   </SourceDirectories>
   <Tooltip>Streams atomic.fm from Icecast into the Space Engineers client.</Tooltip>
   <Description>
-atomic.fm is a prototype client-side plugin for Space Engineers plugin loaders such as Pulsar.
+atomic.fm streams a configurable Icecast URL through the local Windows audio device.
 
-It plays a configured HTTP/HTTPS stream through the local Windows audio device. Any terminal block with atomic.fm=true in Custom Data can act as an ambient client-side radio anchor with distance fade and stereo panning. The default stream URL targets the SAM Broadcaster to Icecast mount at /atomic-radio.
+How to use:
+1. Enable atomic.fm in Pulsar.
+2. Add this to any terminal block's Custom Data:
+   atomic.fm=true
+   atomic.fm.range=35
+   atomic.fm.volume=1.0
+3. Load into a world near that block. The stream starts automatically when a marked block is found.
+4. Use Ctrl+Alt+J or the plugin settings buttons to toggle playback manually.
+
+Notes:
+- Audio is client-side. Each player chooses whether to install and enable the plugin.
+- Marked blocks act as ambient radio anchors with distance fade and stereo panning.
+- If no marked blocks exist, manual playback still works through the local Windows audio device.
   </Description>
 </PluginData>
