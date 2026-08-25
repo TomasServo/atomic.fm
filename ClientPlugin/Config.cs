@@ -13,6 +13,10 @@ namespace ClientPlugin
         private string streamUrl = "http://3.140.179.166:8000/atomic-radio";
         private float volume = 0.35f;
         private bool autoplay;
+        private bool soundBlockMode = true;
+        private string soundBlockTag = "[atomic.fm]";
+        private float fallbackSpeakerRange = 50f;
+        private bool muteOutsideSpeakerRange = true;
 
         #endregion
 
@@ -39,6 +43,34 @@ namespace ClientPlugin
         {
             get => autoplay;
             set => SetField(ref autoplay, value);
+        }
+
+        [Checkbox("Sound Block speakers", description: "Use tagged Sound Blocks as local radio speaker locations.")]
+        public bool SoundBlockMode
+        {
+            get => soundBlockMode;
+            set => SetField(ref soundBlockMode, value);
+        }
+
+        [Textbox("Sound Block tag", description: "Sound Blocks whose name contains this tag act as atomic.fm speakers.")]
+        public string SoundBlockTag
+        {
+            get => soundBlockTag;
+            set => SetField(ref soundBlockTag, value);
+        }
+
+        [Slider(5f, 200f, 5f, SliderAttribute.SliderType.Float, label: "Fallback range", description: "Range in meters used when a tagged Sound Block has no usable range value.")]
+        public float FallbackSpeakerRange
+        {
+            get => fallbackSpeakerRange;
+            set => SetField(ref fallbackSpeakerRange, value);
+        }
+
+        [Checkbox("Mute out of range", description: "Keep the stream running but mute it when no tagged Sound Block is nearby.")]
+        public bool MuteOutsideSpeakerRange
+        {
+            get => muteOutsideSpeakerRange;
+            set => SetField(ref muteOutsideSpeakerRange, value);
         }
 
         [Button("Start atomic.fm", description: "Start streaming the configured station.")]

@@ -11,6 +11,7 @@ This is intentionally a first-stage proof of concept. It does not hook into Soun
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
 - Fixed playback toggle hotkey: `Ctrl+Alt+R`.
+- Optional Sound Block speaker mode. Name Sound Blocks with `[atomic.fm]` to make them local radio speaker anchors.
 - NAudio-backed playback using Windows Media Foundation.
 
 ## Requirements
@@ -54,6 +55,18 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 5. Restart if the loader asks you to.
 6. Open the plugin config dialog.
 7. Press `Start atomic.fm`, or use `Ctrl+Alt+R`.
+
+### Sound Block speaker mode
+
+The plugin is still client-side. It does not replace vanilla Sound Block audio or broadcast audio through the server. Instead, tagged Sound Blocks act as local speaker anchors for the player's own client.
+
+1. Place one or more Sound Blocks.
+2. Add `[atomic.fm]` to each Sound Block name.
+3. Make sure the Sound Blocks are enabled, functional, and powered.
+4. Set each Sound Block's volume and range.
+5. Start atomic.fm with `Ctrl+Alt+R`.
+
+When Sound Block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged Sound Block. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 

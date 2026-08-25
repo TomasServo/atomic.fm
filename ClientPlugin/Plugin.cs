@@ -15,6 +15,7 @@ namespace ClientPlugin
         public static Plugin Instance { get; private set; }
         private SettingsGenerator settingsGenerator;
         private RadioPlayer radioPlayer;
+        private SoundBlockRadioController soundBlockController;
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         public void Init(object gameInstance)
@@ -22,6 +23,7 @@ namespace ClientPlugin
             Instance = this;
             settingsGenerator = new SettingsGenerator();
             radioPlayer = new RadioPlayer();
+            soundBlockController = new SoundBlockRadioController();
             Config.Current.PropertyChanged += OnConfigChanged;
 
             if (Config.Current.Autoplay)
@@ -32,6 +34,7 @@ namespace ClientPlugin
         {
             Config.Current.PropertyChanged -= OnConfigChanged;
             ConfigStorage.Save(Config.Current);
+            soundBlockController = null;
             radioPlayer?.Dispose();
             radioPlayer = null;
             Instance = null;
@@ -45,6 +48,9 @@ namespace ClientPlugin
             {
                 TogglePlayback();
             }
+
+            if (radioPlayer != null && radioPlayer.IsPlaying)
+                radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -90,8 +96,8 @@ namespace ClientPlugin
 
         private void OnConfigChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Config.Volume) && radioPlayer != null)
-                radioPlayer.Volume = Config.Current.Volume;
+            if (radioPlayer != null)
+                radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
         }
     }
 }
