@@ -41,7 +41,7 @@ namespace ClientPlugin
             {
                 lastPan = 0f;
                 lastVolumeMultiplier = 1f;
-                return Clamp(config.OpeningScreenVolume, 0f, 0.5f);
+                return 0f;
             }
 
             if (!config.SoundBlockMode)

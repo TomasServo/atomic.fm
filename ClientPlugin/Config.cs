@@ -12,7 +12,6 @@ namespace ClientPlugin
 
         private string streamUrl = "http://radio.atomic.fm:8000/atomic-radio";
         private float volume = 0.15f;
-        private float openingScreenVolume = 0.05f;
         private bool autoplay;
         private bool soundBlockMode = true;
         private string soundBlockTag = "[atomic.fm]";
@@ -37,13 +36,6 @@ namespace ClientPlugin
         {
             get => volume;
             set => SetField(ref volume, value);
-        }
-
-        [Slider(0f, 0.5f, 0.01f, SliderAttribute.SliderType.Float, label: "Opening screen volume", description: "Playback volume used before a Space Engineers world is loaded.")]
-        public float OpeningScreenVolume
-        {
-            get => openingScreenVolume;
-            set => SetField(ref openingScreenVolume, value);
         }
 
         [Checkbox("Autoplay", description: "Start the configured stream when the plugin loads.")]
