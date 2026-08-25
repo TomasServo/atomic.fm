@@ -114,7 +114,7 @@ The JSON should contain a source entry for `/atomic-radio`.
 
 ## Known Limitations
 
-- Audio is global desktop audio, not in-world positional audio.
+- Audio is rendered by the client through NAudio. Block anchors provide distance fade and stereo panning, not native Space Engineers server-side sound propagation.
 - Each player must install and enable the plugin locally.
 - Some AAC/playlist/redirect streams may fail depending on Windows Media Foundation codecs and station headers.
 - This should be treated as a trusted-source plugin only. Client plugins can access network and local system resources.

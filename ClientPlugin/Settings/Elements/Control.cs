@@ -6,7 +6,7 @@ namespace ClientPlugin.Settings.Elements
 {
     internal class Control
     {
-        // FIXME: This is global and not determined automatically
+        // Shared label width for the generated settings dialog.
         public static readonly float LabelMinWidth = 0.18f;
 
         public readonly MyGuiControlBase GuiControl;
