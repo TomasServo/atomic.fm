@@ -48,10 +48,12 @@ The post-build script copies `InternetRadio.dll` and dependency DLLs to:
 ## Test
 
 1. Start Space Engineers through Pulsar.
-2. Enable `Internet Radio` from the local plugin list.
-3. Restart if the loader asks you to.
-4. Open the plugin config dialog.
-5. Press `Start Radio`, or use `Ctrl+Alt+R`.
+2. If the plugin is not published yet, start Pulsar with `-sources`, open **Sources**, and add this repository as a development folder.
+3. Select `AtomicRadio.xml` as the plugin registration file when Pulsar asks for plugin metadata.
+4. Enable `Atomic Radio` from the plugin list.
+5. Restart if the loader asks you to.
+6. Open the plugin config dialog.
+7. Press `Start Radio`, or use `Ctrl+Alt+R`.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 
