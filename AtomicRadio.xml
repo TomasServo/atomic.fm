@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <PluginData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GitHubPlugin">
-  <Id>TomasServo/Atomic-Radio</Id>
-  <RepoId>TomasServo/Atomic-Radio</RepoId>
+  <Id>TomasServo/atomic.fm</Id>
+  <RepoId>TomasServo/atomic.fm</RepoId>
   <FriendlyName>atomic.fm</FriendlyName>
   <Author>TomasServo</Author>
   <Tooltip>Streams atomic.fm from Icecast into the Space Engineers client.</Tooltip>
