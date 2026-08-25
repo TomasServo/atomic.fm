@@ -118,6 +118,8 @@ Before submitting, confirm these fields are correct:
 
 ## PluginHub submission
 
+This is the public release path for a Pulsar plugin:
+
 1. Fork `https://github.com/StarCpt/PluginHub`.
 2. Clone your fork with Git.
 3. Check whether `atomic.fm` is already present in the `Plugins` folder.
@@ -133,7 +135,11 @@ Plugins/atomic.fm.xml
 8. Open a PR to `StarCpt/PluginHub`.
 9. Wait for human review and merge.
 
-Updates use the same workflow: commit source changes, regenerate `AtomicRadio.xml` so its `<Commit>` points to the source commit, then PR the updated `Plugins/atomic.fm.xml` file to PluginHub.
+The PR will involve a human review of the XML and source code, so expect review feedback before merge.
+
+## Updates
+
+Updating the plugin uses the same workflow. Commit source changes, regenerate `AtomicRadio.xml` so its `<Commit>` points to the source commit, then PR the updated `Plugins/atomic.fm.xml` file to PluginHub.
 
 ## Not the mod-registration path
 
