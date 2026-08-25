@@ -1,6 +1,6 @@
 # atomic.fm for Space Engineers
 
-Client-side Space Engineers plugin prototype for Pulsar/Plugin Loader style clients. It streams an HTTP/HTTPS internet radio URL through the local Windows audio device.
+Client-side Space Engineers plugin for Pulsar/Plugin Loader style clients. It streams an HTTP/HTTPS internet radio URL through the local Windows audio device.
 
 ## Features
 
