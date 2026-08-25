@@ -8,18 +8,34 @@
   <Description>
 atomic.fm streams a configurable Icecast URL through the local Windows audio device.
 
-How to use:
+Any terminal block can be an atomic.fm sound source. You do not need to place a vanilla Sound Block. Planters, lights, antennas, LCDs, doors, cockpits, cargo containers, refineries, assemblers, and most functional blocks can act as radio anchors if they have Custom Data.
+
+Setup:
 1. Enable atomic.fm in Pulsar.
-2. Add this to any terminal block's Custom Data:
+2. Open the terminal/control panel for the block you want to use as the radio source.
+3. Open that block's Custom Data field.
+4. Add this:
    atomic.fm=true
    atomic.fm.range=35
    atomic.fm.volume=1.0
-3. Load into a world near that block. The stream starts automatically when a marked block is found.
-4. Use Ctrl+Alt+J or the plugin settings buttons to toggle playback manually.
+5. Close the terminal and stand near the block.
+6. The stream starts automatically when atomic.fm finds a marked block.
+
+Custom Data options:
+- atomic.fm=true enables the block as a radio anchor.
+- atomic.fm.range sets the audible range in meters.
+- atomic.fm.volume sets that block's local loudness from 0.0 to 1.0.
+
+Controls:
+- Ctrl+Alt+J toggles playback manually.
+- Start atomic.fm and Stop atomic.fm are also available in plugin settings.
+- If you manually stop playback, atomic.fm will stay stopped for that game session.
 
 Notes:
 - Audio is client-side. Each player chooses whether to install and enable the plugin.
 - Marked blocks act as ambient radio anchors with distance fade and stereo panning.
+- The audio is not sent through the game server and does not replace vanilla Sound Block audio.
+- Plain armor blocks cannot be used because they do not have terminal Custom Data.
 - If no marked blocks exist, manual playback still works through the local Windows audio device.
   </Description>
   <SourceDirectories>
