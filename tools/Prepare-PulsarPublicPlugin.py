@@ -27,9 +27,9 @@ DESCRIPTION_LIMIT = 1000
 
 DESCRIPTION = """All Ultralounge all the time.
 
-atomic.fm adds client-side internet radio to Space Engineers through Pulsar. Mark any terminal block as a radio source by adding atomic.fm=true to Custom Data. Optional values: atomic.fm.range=35 and atomic.fm.volume=1.0.
+atomic.fm brings live internet radio, music, and ambient station audio to Space Engineers through Pulsar. Tune into an Icecast stream in the client, or turn almost any terminal block into a spatial radio source by adding atomic.fm=true to Custom Data.
 
-The stream starts automatically near marked blocks with distance fade. Plain armor blocks do not work because they do not have terminal Custom Data. Audio is client-side; each player chooses whether to install and enable the plugin."""
+Use it for lounges, bars, ships, stations, hangars, stores, events, faction bases, and server communities that want music without adding a server mod. Optional per-block settings include atomic.fm.range=35 and atomic.fm.volume=1.0. Audio is client-side, so each player chooses whether to install, enable, and hear atomic.fm."""
 
 
 def run_git(args: list[str], repo_root: Path) -> str:
