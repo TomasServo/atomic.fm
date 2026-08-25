@@ -37,7 +37,7 @@ namespace ClientPlugin
         {
             float baseVolume = Clamp01(config.Volume);
 
-            if (MyAPIGateway.Session == null)
+            if (!IsGameSessionReady())
             {
                 lastPan = 0f;
                 lastVolumeMultiplier = 1f;
@@ -137,7 +137,7 @@ namespace ClientPlugin
         {
             position = Vector3D.Zero;
 
-            if (MyAPIGateway.Session == null)
+            if (!IsGameSessionReady())
                 return false;
 
             if (MyAPIGateway.Session.Camera != null)
@@ -158,7 +158,7 @@ namespace ClientPlugin
         {
             right = Vector3D.Right;
 
-            if (MyAPIGateway.Session == null)
+            if (!IsGameSessionReady())
                 return false;
 
             if (MyAPIGateway.Session.Camera != null)
@@ -173,6 +173,11 @@ namespace ClientPlugin
 
             right = controlledEntity.WorldMatrix.Right;
             return true;
+        }
+
+        private static bool IsGameSessionReady()
+        {
+            return MyAPIGateway.Session?.Player?.Controller?.ControlledEntity?.Entity != null;
         }
 
         private void RefreshAnchors(string tag)
