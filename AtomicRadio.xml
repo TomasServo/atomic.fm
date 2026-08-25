@@ -9,7 +9,7 @@
   <SourceDirectories>
     <Directory>ClientPlugin</Directory>
   </SourceDirectories>
-  <Runtimes>NETFramework</Runtimes>
+  <Runtimes>CLR;Mono</Runtimes>
   <Platforms>Windows</Platforms>
   <Commit>local</Commit>
 </PluginData>
