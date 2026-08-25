@@ -18,6 +18,10 @@ namespace ClientPlugin
         private RadioPlayer radioPlayer;
         private SoundBlockRadioController soundBlockController;
         private int framesUntilStatusNotification;
+        private int framesUntilAmbientScan;
+        private bool manualStopRequested;
+
+        private const int AmbientScanIntervalFrames = 300;
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         public void Init(object gameInstance)
@@ -53,10 +57,14 @@ namespace ClientPlugin
 
             if (radioPlayer != null && radioPlayer.IsPlaying)
             {
+                manualStopRequested = false;
                 radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
                 radioPlayer.Pan = soundBlockController.LastPan;
                 ShowAnchorStatusPeriodically();
+                return;
             }
+
+            TryStartAmbientPlayback();
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -84,6 +92,8 @@ namespace ClientPlugin
 
             try
             {
+                manualStopRequested = false;
+                framesUntilAmbientScan = AmbientScanIntervalFrames;
                 soundBlockController.ForceRefresh(Config.Current);
                 radioPlayer.Play(Config.Current.StreamUrl, Config.Current.Volume);
                 ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
@@ -99,8 +109,25 @@ namespace ClientPlugin
 
         public void StopPlayback()
         {
+            manualStopRequested = true;
             radioPlayer?.Stop();
             ShowNotification("atomic.fm stopped", 2000);
+        }
+
+        private void TryStartAmbientPlayback()
+        {
+            if (manualStopRequested || radioPlayer == null || radioPlayer.IsPlaying || !Config.Current.SoundBlockMode)
+                return;
+
+            if (--framesUntilAmbientScan > 0)
+                return;
+
+            framesUntilAmbientScan = AmbientScanIntervalFrames;
+            soundBlockController.ForceRefresh(Config.Current);
+            if (soundBlockController.AnchorCount <= 0)
+                return;
+
+            StartPlayback();
         }
 
         private void OnConfigChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

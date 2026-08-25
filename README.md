@@ -11,7 +11,7 @@ This is intentionally an early proof of concept. It can use marked blocks as cli
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
 - Fixed playback toggle hotkey: `Ctrl+Alt+J`.
-- Optional block anchor mode. Any terminal block with `atomic.fm=true` in Custom Data can act as a local atomic.fm radio source with distance fade and left/right panning.
+- Optional block anchor mode. Any terminal block with `atomic.fm=true` in Custom Data can act as an ambient local atomic.fm radio source with distance fade and left/right panning.
 - NAudio-backed playback using Windows Media Foundation.
 
 ## Requirements
@@ -64,7 +64,7 @@ The plugin is still client-side. It does not replace vanilla Sound Block audio o
 2. Add the radio marker to each anchor block's Custom Data.
 3. Make sure the anchor blocks are enabled, functional, and powered when the block type supports that.
 4. Set range and volume in Custom Data. Sound Blocks can also use their own volume and range sliders.
-5. Start atomic.fm with `Ctrl+Alt+J`.
+5. atomic.fm starts automatically when a marked block is found. You can still use `Ctrl+Alt+J` or the settings buttons to toggle playback manually.
 
 For a planter-based radio source, use:
 
@@ -74,7 +74,7 @@ atomic.fm.range=35
 atomic.fm.volume=1.0
 ```
 
-When block speaker mode is enabled, the stream stays synchronized locally while its volume and stereo pan follow the strongest nearby tagged anchor block. If no tagged blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. If tagged blocks exist and the player is outside their range, the stream fades out. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
+When block speaker mode is enabled, the plugin periodically scans for marked blocks and starts atomic.fm automatically when one is found. The stream stays synchronized locally while its volume and stereo pan follow the strongest nearby tagged anchor block. If no tagged blocks are found, atomic.fm plays at normal plugin volume only when manually started, so a missing block does not look like a broken stream. If tagged blocks exist and the player is outside their range, the stream fades out. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 
