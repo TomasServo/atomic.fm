@@ -23,6 +23,11 @@ namespace ClientPlugin
 
         private const int AmbientScanIntervalFrames = 300;
 
+        static Plugin()
+        {
+            AssemblyResolver.Register();
+        }
+
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         public void Init(object gameInstance)
         {

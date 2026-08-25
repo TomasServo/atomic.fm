@@ -628,10 +628,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="AssemblyResolver.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="RadioPlayer.cs" />
     <Compile Include="SoundBlockRadioController.cs" />
-    <Compile Include="StereoPanSampleProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ConfigStorage.cs" />
     <Compile Include="Settings\Elements\Button.cs" />

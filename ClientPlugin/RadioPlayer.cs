@@ -1,7 +1,7 @@
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using NAudio.Wave;
 using VRage.Utils;
 
 namespace ClientPlugin
@@ -9,12 +9,14 @@ namespace ClientPlugin
     internal sealed class RadioPlayer : IDisposable
     {
         private readonly object syncRoot = new object();
-        private IWavePlayer outputDevice;
-        private MediaFoundationReader reader;
-        private StereoPanSampleProvider spatialProvider;
+        private object outputDevice;
+        private object reader;
         private CancellationTokenSource startupCancellation;
         private float volume = 0.5f;
         private float pan;
+        private Type waveOutType;
+        private Type mediaFoundationReaderType;
+        private Type waveProviderType;
 
         public bool IsPlaying { get; private set; }
 
@@ -26,8 +28,7 @@ namespace ClientPlugin
                 volume = Math.Max(0f, Math.Min(1f, value));
                 lock (syncRoot)
                 {
-                    if (spatialProvider != null)
-                        spatialProvider.Volume = volume;
+                    SetOutputVolume(outputDevice, volume);
                 }
             }
         }
@@ -38,11 +39,6 @@ namespace ClientPlugin
             set
             {
                 pan = Math.Max(-1f, Math.Min(1f, value));
-                lock (syncRoot)
-                {
-                    if (spatialProvider != null)
-                        spatialProvider.Pan = pan;
-                }
             }
         }
 
@@ -68,28 +64,22 @@ namespace ClientPlugin
             {
                 try
                 {
+                    EnsureAudioTypesLoaded();
                     token.ThrowIfCancellationRequested();
-                    var newReader = new MediaFoundationReader(streamUrl);
+                    var newReader = Activator.CreateInstance(mediaFoundationReaderType, streamUrl);
                     token.ThrowIfCancellationRequested();
 
-                    var newSpatialProvider = new StereoPanSampleProvider(newReader.ToSampleProvider())
-                    {
-                        Volume = Volume,
-                        Pan = Pan
-                    };
-                    var newOutput = new WaveOutEvent();
-                    newOutput.Init(newSpatialProvider);
-                    newOutput.Volume = 1f;
-                    newOutput.PlaybackStopped += OnPlaybackStopped;
+                    var newOutput = Activator.CreateInstance(waveOutType);
+                    waveOutType.GetMethod("Init", new[] { waveProviderType })?.Invoke(newOutput, new[] { newReader });
+                    SetOutputVolume(newOutput, Volume);
 
                     lock (syncRoot)
                     {
                         token.ThrowIfCancellationRequested();
                         reader = newReader;
-                        spatialProvider = newSpatialProvider;
                         outputDevice = newOutput;
                         IsPlaying = true;
-                        newOutput.Play();
+                        waveOutType.GetMethod("Play")?.Invoke(newOutput, null);
                     }
 
                     MyLog.Default.WriteLineAndConsole($"{Plugin.Name}: Streaming {streamUrl}");
@@ -112,8 +102,8 @@ namespace ClientPlugin
             startupCancellation?.Dispose();
             startupCancellation = null;
 
-            IWavePlayer outputToDispose;
-            MediaFoundationReader readerToDispose;
+            object outputToDispose;
+            object readerToDispose;
 
             lock (syncRoot)
             {
@@ -121,18 +111,16 @@ namespace ClientPlugin
                 outputToDispose = outputDevice;
                 readerToDispose = reader;
                 outputDevice = null;
-                spatialProvider = null;
                 reader = null;
             }
 
             if (outputToDispose != null)
             {
-                outputToDispose.PlaybackStopped -= OnPlaybackStopped;
-                outputToDispose.Stop();
-                outputToDispose.Dispose();
+                outputToDispose.GetType().GetMethod("Stop")?.Invoke(outputToDispose, null);
+                (outputToDispose as IDisposable)?.Dispose();
             }
 
-            readerToDispose?.Dispose();
+            (readerToDispose as IDisposable)?.Dispose();
         }
 
         public void Dispose()
@@ -140,12 +128,26 @@ namespace ClientPlugin
             Stop();
         }
 
-        private void OnPlaybackStopped(object sender, StoppedEventArgs e)
+        private void EnsureAudioTypesLoaded()
         {
-            if (e.Exception != null)
-                MyLog.Default.Error($"{Plugin.Name}: Radio playback stopped with error: {e.Exception}");
+            if (waveOutType != null && mediaFoundationReaderType != null && waveProviderType != null)
+                return;
 
-            IsPlaying = false;
+            AssemblyResolver.Register();
+
+            waveOutType = Type.GetType("NAudio.Wave.WaveOutEvent, NAudio.WinMM", true);
+            mediaFoundationReaderType = Type.GetType("NAudio.Wave.MediaFoundationReader, NAudio.Wasapi", true);
+            waveProviderType = Type.GetType("NAudio.Wave.IWaveProvider, NAudio.Core", true);
+        }
+
+        private static void SetOutputVolume(object output, float requestedVolume)
+        {
+            if (output == null)
+                return;
+
+            var volumeProperty = output.GetType().GetProperty("Volume", BindingFlags.Instance | BindingFlags.Public);
+            if (volumeProperty != null && volumeProperty.CanWrite)
+                volumeProperty.SetValue(output, Math.Max(0f, Math.Min(1f, requestedVolume)), null);
         }
     }
 }
