@@ -19,11 +19,13 @@ namespace ClientPlugin
         private readonly List<IMyTerminalBlock> anchors = new List<IMyTerminalBlock>();
         private int framesUntilScan;
         private float lastVolumeMultiplier = 1f;
+        private float lastPan;
 
         public int AnchorCount => anchors.Count;
         public string NearestAnchorName { get; private set; } = string.Empty;
         public double NearestAnchorDistance { get; private set; }
         public float LastVolumeMultiplier => lastVolumeMultiplier;
+        public float LastPan => lastPan;
 
         public void ForceRefresh(Config config)
         {
@@ -36,7 +38,10 @@ namespace ClientPlugin
             float baseVolume = Clamp01(config.Volume);
 
             if (!config.SoundBlockMode)
+            {
+                lastPan = 0f;
                 return baseVolume;
+            }
 
             float multiplier = GetSpeakerMultiplier(config);
             lastVolumeMultiplier = Smooth(lastVolumeMultiplier, multiplier, 0.15f);
@@ -46,7 +51,10 @@ namespace ClientPlugin
         private float GetSpeakerMultiplier(Config config)
         {
             if (MyAPIGateway.Session == null || MyAPIGateway.Session.Camera == null)
+            {
+                lastPan = 0f;
                 return 1f;
+            }
 
             if (--framesUntilScan <= 0)
             {
@@ -55,10 +63,14 @@ namespace ClientPlugin
             }
 
             if (anchors.Count == 0)
+            {
+                lastPan = 0f;
                 return 1f;
+            }
 
             Vector3D listenerPosition = MyAPIGateway.Session.Camera.Position;
             float strongest = 0f;
+            float selectedPan = 0f;
             double nearestDistance = double.MaxValue;
             string nearestName = string.Empty;
 
@@ -85,12 +97,30 @@ namespace ClientPlugin
 
                 float distanceFactor = 1f - (float)(distance / range);
                 float anchorVolume = GetAnchorVolume(anchor);
-                strongest = Math.Max(strongest, distanceFactor * anchorVolume);
+                float score = distanceFactor * anchorVolume;
+                if (score > strongest)
+                {
+                    strongest = score;
+                    selectedPan = CalculatePan(listenerPosition, anchor.GetPosition());
+                }
             }
 
             NearestAnchorName = nearestName;
             NearestAnchorDistance = nearestDistance == double.MaxValue ? 0d : nearestDistance;
+            lastPan = strongest > 0f ? selectedPan : 0f;
             return Clamp01(strongest);
+        }
+
+        private static float CalculatePan(Vector3D listenerPosition, Vector3D anchorPosition)
+        {
+            Vector3D toAnchor = anchorPosition - listenerPosition;
+            double distance = toAnchor.Length();
+            if (distance <= 0.001d)
+                return 0f;
+
+            Vector3D direction = toAnchor / distance;
+            Vector3D right = MyAPIGateway.Session.Camera.WorldMatrix.Right;
+            return Clamp((float)Vector3D.Dot(direction, right), -1f, 1f);
         }
 
         private void RefreshAnchors(string tag)
@@ -245,6 +275,13 @@ namespace ClientPlugin
             if (value < 0f)
                 return 0f;
             return value > 1f ? 1f : value;
+        }
+
+        private static float Clamp(float value, float min, float max)
+        {
+            if (value < min)
+                return min;
+            return value > max ? max : value;
         }
     }
 }

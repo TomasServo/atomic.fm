@@ -2,7 +2,7 @@
 
 Client-side Space Engineers plugin prototype for Pulsar/Plugin Loader style clients. It streams an HTTP/HTTPS internet radio URL through the local Windows audio device.
 
-This is intentionally an early proof of concept. It can use Sound Blocks as client-side speaker anchors, but it does not replace vanilla Sound Block audio, Jukeboxes, antennas, or Space Engineers positional audio.
+This is intentionally an early proof of concept. It can use marked blocks as client-side speaker anchors with NAudio volume fading and stereo panning, but it does not replace vanilla Sound Block audio, Jukeboxes, antennas, or server-side Space Engineers audio.
 
 ## Features
 
@@ -11,7 +11,7 @@ This is intentionally an early proof of concept. It can use Sound Blocks as clie
 - Optional autoplay when the plugin loads.
 - Start/stop buttons in the plugin config dialog.
 - Fixed playback toggle hotkey: `Ctrl+Alt+J`.
-- Optional block anchor mode. Any terminal block with `atomic.fm=true` in Custom Data can act as a local atomic.fm radio source.
+- Optional block anchor mode. Any terminal block with `atomic.fm=true` in Custom Data can act as a local atomic.fm radio source with distance fade and left/right panning.
 - NAudio-backed playback using Windows Media Foundation.
 
 ## Requirements
@@ -74,7 +74,7 @@ atomic.fm.range=35
 atomic.fm.volume=1.0
 ```
 
-When block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged anchor block. If no tagged blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. If tagged blocks exist and the player is outside their range, the stream fades out. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
+When block speaker mode is enabled, the stream stays synchronized locally while its volume and stereo pan follow the strongest nearby tagged anchor block. If no tagged blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. If tagged blocks exist and the player is outside their range, the stream fades out. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 

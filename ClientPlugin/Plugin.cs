@@ -54,6 +54,7 @@ namespace ClientPlugin
             if (radioPlayer != null && radioPlayer.IsPlaying)
             {
                 radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+                radioPlayer.Pan = soundBlockController.LastPan;
                 ShowAnchorStatusPeriodically();
             }
         }
@@ -105,7 +106,10 @@ namespace ClientPlugin
         private void OnConfigChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (radioPlayer != null)
+            {
                 radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+                radioPlayer.Pan = soundBlockController.LastPan;
+            }
         }
 
         private void ShowAnchorStatusPeriodically()
@@ -121,7 +125,7 @@ namespace ClientPlugin
             }
 
             ShowNotification(
-                $"atomic.fm: {soundBlockController.AnchorCount} anchor(s), nearest {soundBlockController.NearestAnchorDistance:0}m, volume {soundBlockController.LastVolumeMultiplier:0.00}",
+                $"atomic.fm: {soundBlockController.AnchorCount} anchor(s), nearest {soundBlockController.NearestAnchorDistance:0}m, volume {soundBlockController.LastVolumeMultiplier:0.00}, pan {soundBlockController.LastPan:0.00}",
                 2500);
         }
 

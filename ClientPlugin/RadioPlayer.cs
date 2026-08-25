@@ -11,8 +11,10 @@ namespace ClientPlugin
         private readonly object syncRoot = new object();
         private IWavePlayer outputDevice;
         private MediaFoundationReader reader;
+        private StereoPanSampleProvider spatialProvider;
         private CancellationTokenSource startupCancellation;
         private float volume = 0.5f;
+        private float pan;
 
         public bool IsPlaying { get; private set; }
 
@@ -24,8 +26,22 @@ namespace ClientPlugin
                 volume = Math.Max(0f, Math.Min(1f, value));
                 lock (syncRoot)
                 {
-                    if (outputDevice != null)
-                        outputDevice.Volume = volume;
+                    if (spatialProvider != null)
+                        spatialProvider.Volume = volume;
+                }
+            }
+        }
+
+        public float Pan
+        {
+            get => pan;
+            set
+            {
+                pan = Math.Max(-1f, Math.Min(1f, value));
+                lock (syncRoot)
+                {
+                    if (spatialProvider != null)
+                        spatialProvider.Pan = pan;
                 }
             }
         }
@@ -56,15 +72,21 @@ namespace ClientPlugin
                     var newReader = new MediaFoundationReader(streamUrl);
                     token.ThrowIfCancellationRequested();
 
+                    var newSpatialProvider = new StereoPanSampleProvider(newReader.ToSampleProvider())
+                    {
+                        Volume = Volume,
+                        Pan = Pan
+                    };
                     var newOutput = new WaveOutEvent();
-                    newOutput.Init(newReader);
-                    newOutput.Volume = Volume;
+                    newOutput.Init(newSpatialProvider);
+                    newOutput.Volume = 1f;
                     newOutput.PlaybackStopped += OnPlaybackStopped;
 
                     lock (syncRoot)
                     {
                         token.ThrowIfCancellationRequested();
                         reader = newReader;
+                        spatialProvider = newSpatialProvider;
                         outputDevice = newOutput;
                         IsPlaying = true;
                         newOutput.Play();
@@ -99,6 +121,7 @@ namespace ClientPlugin
                 outputToDispose = outputDevice;
                 readerToDispose = reader;
                 outputDevice = null;
+                spatialProvider = null;
                 reader = null;
             }
 
