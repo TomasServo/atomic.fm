@@ -19,5 +19,5 @@ Use it for lounges, bars, ships, stations, hangars, stores, events, faction base
     <PackageReference Include="NAudio" Version="2.2.1" />
   </NuGetReferences>
   <Hidden>false</Hidden>
-  <Commit>5fdecdad982ece44530e0f47811531e5e9e037d4</Commit>
+  <Commit>93190db49046b2e3fbabf8b56c5d08640de5984a</Commit>
 </PluginData>
