@@ -31,7 +31,7 @@ namespace ClientPlugin
         private float GetSpeakerMultiplier(Config config)
         {
             if (MyAPIGateway.Session == null || MyAPIGateway.Session.Camera == null)
-                return config.MuteOutsideSpeakerRange ? 0f : 1f;
+                return 1f;
 
             if (--framesUntilScan <= 0)
             {
@@ -40,7 +40,7 @@ namespace ClientPlugin
             }
 
             if (speakers.Count == 0)
-                return config.MuteOutsideSpeakerRange ? 0f : 1f;
+                return 1f;
 
             Vector3D listenerPosition = MyAPIGateway.Session.Camera.Position;
             float strongest = 0f;

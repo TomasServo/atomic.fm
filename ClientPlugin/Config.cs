@@ -16,7 +16,7 @@ namespace ClientPlugin
         private bool soundBlockMode = true;
         private string soundBlockTag = "[atomic.fm]";
         private float fallbackSpeakerRange = 50f;
-        private bool muteOutsideSpeakerRange = true;
+        private bool muteOutsideSpeakerRange;
 
         #endregion
 

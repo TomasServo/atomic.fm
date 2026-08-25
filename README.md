@@ -66,7 +66,7 @@ The plugin is still client-side. It does not replace vanilla Sound Block audio o
 4. Set each Sound Block's volume and range.
 5. Start atomic.fm with `Ctrl+Alt+F`.
 
-When Sound Block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged Sound Block. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
+When Sound Block speaker mode is enabled, the stream stays synchronized locally while its volume follows the nearest tagged Sound Block. If no tagged Sound Blocks are found, atomic.fm plays at normal plugin volume so a missing block does not look like a broken stream. Players can opt in, change the stream URL, or disable speaker mode from their own plugin settings.
 
 The default stream URL is your Icecast mount fed by SAM Broadcaster:
 
