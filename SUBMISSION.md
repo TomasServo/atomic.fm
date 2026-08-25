@@ -144,3 +144,15 @@ Updating the plugin uses the same workflow. Commit source changes, regenerate `A
 ## Not the mod-registration path
 
 The `Plugins/Mods` instructions are only for client-side Steam Workshop mods. They involve `SampleMod.xml` and Workshop IDs. `atomic.fm` is a compiled Pulsar client plugin, so its PR belongs in `Plugins/atomic.fm.xml`.
+
+If you are comparing against the mod-registration checklist, use this mapping:
+
+- Check whether the plugin is already present by searching `PluginHub/Plugins` for `atomic.fm` or `TomasServo/atomic.fm`.
+- Fork and clone `https://github.com/StarCpt/PluginHub`.
+- Create a new branch from `main`.
+- Do not copy `SampleMod.xml`.
+- Do not add anything under `Plugins/Mods`.
+- Do not use a Workshop ID.
+- Copy this repository's `AtomicRadio.xml` to `Plugins/atomic.fm.xml`.
+- Commit `Plugins/atomic.fm.xml`, push the branch, and open the PR.
+- Pulsar will build the plugin from the GitHub repository and commit listed in `Plugins/atomic.fm.xml`; the game will not update it as a Workshop mod.
