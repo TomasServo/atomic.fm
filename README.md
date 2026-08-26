@@ -27,7 +27,7 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 - atomic.fm is off when the game starts.
 - The opening menu is capped to `0.03` volume.
 - Default plugin volume is `0.03`.
-- The audio output is hard-capped at `0.03`, including loading and sector transitions.
+- Players can raise the volume from plugin settings after startup.
 
 ## Notes
 

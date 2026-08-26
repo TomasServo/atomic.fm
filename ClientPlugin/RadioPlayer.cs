@@ -12,12 +12,11 @@ namespace ClientPlugin
         private object outputDevice;
         private object reader;
         private CancellationTokenSource startupCancellation;
-        private float volume = MaxOutputVolume;
+        private float volume = Config.DefaultVolume;
         private float pan;
         private Type waveOutType;
         private Type mediaFoundationReaderType;
         private Type waveProviderType;
-        private const float MaxOutputVolume = Config.DefaultVolume;
 
         public bool IsPlaying { get; private set; }
 
@@ -26,7 +25,7 @@ namespace ClientPlugin
             get => volume;
             set
             {
-                volume = Math.Max(0f, Math.Min(MaxOutputVolume, value));
+                volume = Clamp01(value);
                 lock (syncRoot)
                 {
                     SetOutputVolume(outputDevice, volume);
@@ -149,7 +148,14 @@ namespace ClientPlugin
 
             var volumeProperty = output.GetType().GetProperty("Volume", BindingFlags.Instance | BindingFlags.Public);
             if (volumeProperty != null && volumeProperty.CanWrite)
-                volumeProperty.SetValue(output, Math.Max(0f, Math.Min(MaxOutputVolume, requestedVolume)), null);
+                volumeProperty.SetValue(output, Clamp01(requestedVolume), null);
+        }
+
+        private static float Clamp01(float value)
+        {
+            if (value < 0f)
+                return 0f;
+            return value > 1f ? 1f : value;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace ClientPlugin
             set => SetField(ref streamUrl, value);
         }
 
-        [Slider(0f, 1f, 0.01f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0 to 1. atomic.fm applies a quiet output pad after this setting.")]
+        [Slider(0f, 1f, 0.01f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0 to 1. Defaults low to prevent loud startup audio.")]
         public float Volume
         {
             get => volume;
