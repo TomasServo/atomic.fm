@@ -96,7 +96,7 @@ Expected behavior:
 ```text
 atomic.fm=true
 atomic.fm.range=35
-atomic.fm.volume=0.3
+atomic.fm.volume=3
 ```
 
 ## XML file

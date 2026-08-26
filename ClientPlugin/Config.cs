@@ -8,10 +8,10 @@ namespace ClientPlugin
 {
     public class Config : INotifyPropertyChanged
     {
-        public const float DefaultVolume = 0.03f;
+        public const float DefaultVolume = 1f;
         public const float StartupSafetyVolume = 0.03f;
         public const string DefaultStreamUrl = "http://radio.atomic.fm:8000/atomic-radio";
-        public const int CurrentConfigVersion = 3;
+        public const int CurrentConfigVersion = 4;
 
         #region Options
 
@@ -36,7 +36,7 @@ namespace ClientPlugin
             set => SetField(ref streamUrl, value);
         }
 
-        [Slider(0f, 1f, 0.01f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0 to 1. The plugin is off until started in a world.")]
+        [Slider(1f, 10f, 1f, SliderAttribute.SliderType.Float, label: "Volume", description: "atomic.fm playback volume from 1 to 10. The plugin is off until started in a world.")]
         public float Volume
         {
             get => volume;
@@ -95,6 +95,16 @@ namespace ClientPlugin
 
         public static readonly Config Default = new Config();
         public static readonly Config Current = ConfigStorage.Load();
+
+        public static float VolumeToGain(float userVolume)
+        {
+            if (userVolume < 1f)
+                userVolume = 1f;
+            if (userVolume > 10f)
+                userVolume = 10f;
+
+            return userVolume / 10f;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

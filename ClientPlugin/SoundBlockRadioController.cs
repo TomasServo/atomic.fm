@@ -37,7 +37,7 @@ namespace ClientPlugin
 
         public float GetEffectiveVolume(Config config)
         {
-            float baseVolume = Clamp01(config.Volume);
+            float baseVolume = Config.VolumeToGain(config.Volume);
 
             if (IsOpeningMenuActive())
             {
@@ -254,7 +254,7 @@ namespace ClientPlugin
         {
             float customVolume;
             if (TryGetCustomDataFloat(anchor.CustomData, CustomDataVolumeKey, out customVolume))
-                return Clamp01(customVolume);
+                return Config.VolumeToGain(customVolume);
 
             IMySoundBlock soundBlock = anchor as IMySoundBlock;
             return soundBlock != null ? Clamp01(soundBlock.Volume) : 0.5f;
