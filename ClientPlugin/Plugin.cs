@@ -57,11 +57,8 @@ namespace ClientPlugin
             if (IsOpeningMenuActive())
             {
                 if (radioPlayer != null && radioPlayer.IsPlaying)
-                {
-                    framesUntilFullVolume = StartupQuietFrames;
-                    radioPlayer.Volume = MainMenuVolume;
-                    radioPlayer.Pan = 0f;
-                }
+                    StopPlayback(showNotification: false);
+
                 return;
             }
 
@@ -108,10 +105,13 @@ namespace ClientPlugin
                 return;
 
             bool isOpeningMenuActive = IsOpeningMenuActive();
-            if (!isOpeningMenuActive && MyAPIGateway.Session == null)
+            if (isOpeningMenuActive || MyAPIGateway.Session == null)
             {
                 manualStopRequested = true;
                 radioPlayer.Stop();
+                if (isOpeningMenuActive)
+                    ShowNotification("atomic.fm is available after loading into a world", 2500);
+
                 return;
             }
 

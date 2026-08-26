@@ -9,15 +9,18 @@ namespace ClientPlugin
     public class Config : INotifyPropertyChanged
     {
         public const float DefaultVolume = 0.03f;
+        public const string DefaultStreamUrl = "http://radio.atomic.fm:8000/atomic-radio";
+        public const int CurrentConfigVersion = 2;
 
         #region Options
 
-        private string streamUrl = "http://radio.atomic.fm:8000/atomic-radio";
+        private string streamUrl = DefaultStreamUrl;
         private float volume = DefaultVolume;
         private bool soundBlockMode = true;
         private string soundBlockTag = "[atomic.fm]";
         private float fallbackSpeakerRange = 50f;
         private bool muteOutsideSpeakerRange;
+        private int configVersion = CurrentConfigVersion;
 
         #endregion
 
@@ -65,6 +68,12 @@ namespace ClientPlugin
         {
             get => muteOutsideSpeakerRange;
             set => SetField(ref muteOutsideSpeakerRange, value);
+        }
+
+        public int ConfigVersion
+        {
+            get => configVersion;
+            set => SetField(ref configVersion, value);
         }
 
         [Button("Start atomic.fm", description: "Start streaming the configured station.")]

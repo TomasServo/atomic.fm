@@ -31,7 +31,9 @@ namespace ClientPlugin.Settings
             {
                 using (var streamReader = File.OpenText(path))
                 {
-                    return (Config)xmlSerializer.Deserialize(streamReader) ?? Config.Default;
+                    var config = (Config)xmlSerializer.Deserialize(streamReader) ?? Config.Default;
+                    Normalize(config);
+                    return config;
                 }
             }
             catch (Exception)
@@ -40,6 +42,25 @@ namespace ClientPlugin.Settings
             }
             
             return Config.Default;
+        }
+
+        private static void Normalize(Config config)
+        {
+            if (config == null)
+                return;
+
+            bool oldConfig = config.ConfigVersion < Config.CurrentConfigVersion;
+
+            if (string.IsNullOrWhiteSpace(config.StreamUrl) ||
+                config.StreamUrl.IndexOf("3.140.179.166", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                config.StreamUrl = Config.DefaultStreamUrl;
+            }
+
+            if (config.Volume <= 0f || (oldConfig && config.Volume > Config.DefaultVolume))
+                config.Volume = Config.DefaultVolume;
+
+            config.ConfigVersion = Config.CurrentConfigVersion;
         }
         
     }
