@@ -31,8 +31,13 @@ REM Copy the plugin and dependency assemblies into the plugin directory
 echo Copying plugin output from "%SOURCE%" to "%PLUGIN_DIR%\"
 
 for /l %%i in (1, 1, 10) do (
-    copy /y "%SOURCE%\*.dll" "%PLUGIN_DIR%\" >NUL
-    copy /y "%SOURCE%\*.pdb" "%PLUGIN_DIR%\" >NUL 2>&1
+    if not exist "%PLUGIN_DIR%\atomic.fm.libs" mkdir "%PLUGIN_DIR%\atomic.fm.libs" >NUL 2>&1
+    copy /y "%SOURCE%\atomic.fm.dll" "%PLUGIN_DIR%\" >NUL
+    copy /y "%SOURCE%\atomic.fm.pdb" "%PLUGIN_DIR%\" >NUL 2>&1
+    copy /y "%SOURCE%\NAudio*.dll" "%PLUGIN_DIR%\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\Microsoft.Win32.Registry.dll" "%PLUGIN_DIR%\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\System.Security.AccessControl.dll" "%PLUGIN_DIR%\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\System.Security.Principal.Windows.dll" "%PLUGIN_DIR%\atomic.fm.libs\" >NUL 2>&1
     copy /y "%~dp0PluginHub.xml" "%PLUGIN_DIR%\plugin.xml" >NUL
 
     if !ERRORLEVEL! NEQ 0 (
@@ -52,17 +57,25 @@ exit /b 1
 :BREAK_LOOP
 if exist "D:\Pulsar\Legacy\Local" (
     echo Copying plugin output to "D:\Pulsar\Legacy\Local\"
-    copy /y "%SOURCE%\*.dll" "D:\Pulsar\Legacy\Local\" >NUL
-    copy /y "%SOURCE%\*.pdb" "D:\Pulsar\Legacy\Local\" >NUL 2>&1
+    if not exist "D:\Pulsar\Legacy\Local\atomic.fm.libs" mkdir "D:\Pulsar\Legacy\Local\atomic.fm.libs" >NUL 2>&1
+    copy /y "%SOURCE%\atomic.fm.dll" "D:\Pulsar\Legacy\Local\" >NUL
+    copy /y "%SOURCE%\atomic.fm.pdb" "D:\Pulsar\Legacy\Local\" >NUL 2>&1
+    copy /y "%SOURCE%\NAudio*.dll" "D:\Pulsar\Legacy\Local\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\Microsoft.Win32.Registry.dll" "D:\Pulsar\Legacy\Local\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\System.Security.AccessControl.dll" "D:\Pulsar\Legacy\Local\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\System.Security.Principal.Windows.dll" "D:\Pulsar\Legacy\Local\atomic.fm.libs\" >NUL 2>&1
     copy /y "%~dp0PluginHub.xml" "D:\Pulsar\Legacy\Local\plugin.xml" >NUL
 )
 
 if exist "D:\Pulsar\Legacy\Local\Atomic-Radio" (
     echo Copying plugin output to "D:\Pulsar\Legacy\Local\Atomic-Radio\"
-    copy /y "%SOURCE%\*.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\" >NUL
-    copy /y "%SOURCE%\*.pdb" "D:\Pulsar\Legacy\Local\Atomic-Radio\" >NUL 2>&1
+    if not exist "D:\Pulsar\Legacy\Local\Atomic-Radio\atomic.fm.libs" mkdir "D:\Pulsar\Legacy\Local\Atomic-Radio\atomic.fm.libs" >NUL 2>&1
     copy /y "%SOURCE%\atomic.fm.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\plugin.dll" >NUL
     copy /y "%SOURCE%\atomic.fm.pdb" "D:\Pulsar\Legacy\Local\Atomic-Radio\plugin.pdb" >NUL 2>&1
+    copy /y "%SOURCE%\NAudio*.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\Microsoft.Win32.Registry.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\System.Security.AccessControl.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\atomic.fm.libs\" >NUL 2>&1
+    copy /y "%SOURCE%\System.Security.Principal.Windows.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\atomic.fm.libs\" >NUL 2>&1
     copy /y "%~dp0PluginHub.xml" "D:\Pulsar\Legacy\Local\Atomic-Radio\plugin.xml" >NUL
 )
 
