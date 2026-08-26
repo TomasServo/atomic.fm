@@ -23,6 +23,7 @@ namespace ClientPlugin
         private bool manualStopRequested = true;
 
         private const int AmbientScanIntervalFrames = 300;
+        private const float MainMenuVolume = 0.05f;
 
         static Plugin()
         {
@@ -53,8 +54,11 @@ namespace ClientPlugin
         {
             if (IsMainMenuOpen())
             {
-                StopPlayback(showNotification: false);
-
+                if (radioPlayer != null && radioPlayer.IsPlaying)
+                {
+                    radioPlayer.Volume = MainMenuVolume;
+                    radioPlayer.Pan = 0f;
+                }
                 return;
             }
 
@@ -100,7 +104,8 @@ namespace ClientPlugin
             if (radioPlayer == null)
                 return;
 
-            if (IsMainMenuOpen() || MyAPIGateway.Session == null)
+            bool isMainMenuOpen = IsMainMenuOpen();
+            if (!isMainMenuOpen && MyAPIGateway.Session == null)
             {
                 manualStopRequested = true;
                 radioPlayer.Stop();
@@ -112,7 +117,8 @@ namespace ClientPlugin
                 manualStopRequested = false;
                 framesUntilAmbientScan = AmbientScanIntervalFrames;
                 soundBlockController.ForceRefresh(Config.Current);
-                radioPlayer.Play(Config.Current.StreamUrl, soundBlockController.GetEffectiveVolume(Config.Current));
+                float initialVolume = isMainMenuOpen ? MainMenuVolume : soundBlockController.GetEffectiveVolume(Config.Current);
+                radioPlayer.Play(Config.Current.StreamUrl, initialVolume);
                 ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
             }
             catch (Exception ex)
@@ -157,6 +163,13 @@ namespace ClientPlugin
         {
             if (radioPlayer != null)
             {
+                if (IsMainMenuOpen())
+                {
+                    radioPlayer.Volume = MainMenuVolume;
+                    radioPlayer.Pan = 0f;
+                    return;
+                }
+
                 radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
                 radioPlayer.Pan = soundBlockController.LastPan;
             }
