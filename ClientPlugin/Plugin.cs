@@ -25,7 +25,7 @@ namespace ClientPlugin
 
         private const int AmbientScanIntervalFrames = 300;
         private const int StartupQuietFrames = 600;
-        private const float MainMenuVolume = Config.DefaultVolume;
+        private const float StartupSafetyVolume = Config.StartupSafetyVolume;
 
         static Plugin()
         {
@@ -121,7 +121,7 @@ namespace ClientPlugin
                 framesUntilFullVolume = StartupQuietFrames;
                 framesUntilAmbientScan = AmbientScanIntervalFrames;
                 soundBlockController.ForceRefresh(Config.Current);
-                radioPlayer.Play(Config.Current.StreamUrl, MainMenuVolume);
+                radioPlayer.Play(Config.Current.StreamUrl, StartupSafetyVolume);
                 ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
             }
             catch (Exception ex)
@@ -169,7 +169,7 @@ namespace ClientPlugin
                 if (IsOpeningMenuActive())
                 {
                     framesUntilFullVolume = StartupQuietFrames;
-                    radioPlayer.Volume = MainMenuVolume;
+                    radioPlayer.Volume = StartupSafetyVolume;
                     radioPlayer.Pan = 0f;
                     return;
                 }
@@ -185,7 +185,7 @@ namespace ClientPlugin
             if (framesUntilFullVolume > 0)
             {
                 framesUntilFullVolume--;
-                return Math.Min(configuredVolume, Config.DefaultVolume);
+                return Math.Min(configuredVolume, Config.StartupSafetyVolume);
             }
 
             return configuredVolume;
