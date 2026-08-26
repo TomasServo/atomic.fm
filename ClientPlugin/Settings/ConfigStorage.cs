@@ -51,11 +51,8 @@ namespace ClientPlugin.Settings
 
             bool oldConfig = config.ConfigVersion < Config.CurrentConfigVersion;
 
-            if (string.IsNullOrWhiteSpace(config.StreamUrl) ||
-                config.StreamUrl.IndexOf("3.140.179.166", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
+            if (string.IsNullOrWhiteSpace(config.StreamUrl))
                 config.StreamUrl = Config.DefaultStreamUrl;
-            }
 
             if (config.Volume <= 0f || oldConfig)
                 config.Volume = Config.DefaultVolume;
