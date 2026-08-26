@@ -193,7 +193,7 @@ namespace ClientPlugin
 
         private static bool IsGameSessionReady()
         {
-            return MyAPIGateway.Session?.Player?.Controller?.ControlledEntity?.Entity != null;
+            return MyAPIGateway.Session?.Player?.Character != null;
         }
     }
 }
