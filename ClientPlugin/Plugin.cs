@@ -20,9 +20,11 @@ namespace ClientPlugin
         private SoundBlockRadioController soundBlockController;
         private int framesUntilStatusNotification;
         private int framesUntilAmbientScan;
+        private int framesUntilFullVolume;
         private bool manualStopRequested = true;
 
         private const int AmbientScanIntervalFrames = 300;
+        private const int StartupQuietFrames = 600;
         private const float MainMenuVolume = Config.DefaultVolume;
 
         static Plugin()
@@ -56,6 +58,7 @@ namespace ClientPlugin
             {
                 if (radioPlayer != null && radioPlayer.IsPlaying)
                 {
+                    framesUntilFullVolume = StartupQuietFrames;
                     radioPlayer.Volume = MainMenuVolume;
                     radioPlayer.Pan = 0f;
                 }
@@ -72,7 +75,7 @@ namespace ClientPlugin
             if (radioPlayer != null && radioPlayer.IsPlaying)
             {
                 manualStopRequested = false;
-                radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+                radioPlayer.Volume = GetCurrentPlaybackVolume();
                 radioPlayer.Pan = soundBlockController.LastPan;
                 ShowAnchorStatusPeriodically();
                 return;
@@ -115,10 +118,10 @@ namespace ClientPlugin
             try
             {
                 manualStopRequested = false;
+                framesUntilFullVolume = StartupQuietFrames;
                 framesUntilAmbientScan = AmbientScanIntervalFrames;
                 soundBlockController.ForceRefresh(Config.Current);
-                float initialVolume = isMainMenuOpen ? MainMenuVolume : soundBlockController.GetEffectiveVolume(Config.Current);
-                radioPlayer.Play(Config.Current.StreamUrl, initialVolume);
+                radioPlayer.Play(Config.Current.StreamUrl, MainMenuVolume);
                 ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
             }
             catch (Exception ex)
@@ -165,14 +168,27 @@ namespace ClientPlugin
             {
                 if (IsMainMenuOpen())
                 {
+                    framesUntilFullVolume = StartupQuietFrames;
                     radioPlayer.Volume = MainMenuVolume;
                     radioPlayer.Pan = 0f;
                     return;
                 }
 
-                radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+                radioPlayer.Volume = GetCurrentPlaybackVolume();
                 radioPlayer.Pan = soundBlockController.LastPan;
             }
+        }
+
+        private float GetCurrentPlaybackVolume()
+        {
+            float configuredVolume = soundBlockController.GetEffectiveVolume(Config.Current);
+            if (framesUntilFullVolume > 0)
+            {
+                framesUntilFullVolume--;
+                return Math.Min(configuredVolume, Config.DefaultVolume);
+            }
+
+            return configuredVolume;
         }
 
         private void ShowAnchorStatusPeriodically()
