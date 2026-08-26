@@ -23,7 +23,7 @@ namespace ClientPlugin
         private bool manualStopRequested = true;
 
         private const int AmbientScanIntervalFrames = 300;
-        private const float MainMenuVolume = 0.05f;
+        private const float MainMenuVolume = Config.DefaultVolume;
 
         static Plugin()
         {

@@ -30,7 +30,11 @@ namespace ClientPlugin.Settings
             try
             {
                 using (var streamReader = File.OpenText(path))
-                    return (Config)xmlSerializer.Deserialize(streamReader) ?? Config.Default;
+                {
+                    Config config = (Config)xmlSerializer.Deserialize(streamReader) ?? Config.Default;
+                    config.Volume = Math.Max(0f, Math.Min(Config.DefaultVolume, config.Volume));
+                    return config;
+                }
             }
             catch (Exception)
             {

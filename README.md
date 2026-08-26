@@ -25,8 +25,9 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 - `atomic.fm.range`: hearing range in meters
 - `atomic.fm.volume`: block volume from `0.0` to `1.0`; start around `0.3`
 - atomic.fm is off when the game starts.
-- The opening menu is capped to `0.05` volume.
-- Default plugin volume is `0.2`. Raise `Volume` or `atomic.fm.volume` if needed.
+- The opening menu is capped to `0.03` volume.
+- Default plugin volume is `0.03`.
+- The audio output is hard-capped at `0.03`, including loading and sector transitions.
 
 ## Notes
 

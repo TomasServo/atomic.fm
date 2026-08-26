@@ -8,10 +8,12 @@ namespace ClientPlugin
 {
     public class Config : INotifyPropertyChanged
     {
+        public const float DefaultVolume = 0.03f;
+
         #region Options
 
         private string streamUrl = "http://radio.atomic.fm:8000/atomic-radio";
-        private float volume = 0.2f;
+        private float volume = DefaultVolume;
         private bool soundBlockMode = true;
         private string soundBlockTag = "[atomic.fm]";
         private float fallbackSpeakerRange = 50f;
