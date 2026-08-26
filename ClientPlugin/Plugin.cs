@@ -3,6 +3,7 @@ using ClientPlugin.Settings;
 using ClientPlugin.Settings.Layouts;
 using Sandbox.ModAPI;
 using Sandbox.Graphics.GUI;
+using SpaceEngineers.Game.GUI;
 using VRage.Input;
 using VRage.Plugins;
 using VRage.Utils;
@@ -50,10 +51,9 @@ namespace ClientPlugin
 
         public void Update()
         {
-            if (!IsGameSessionReady())
+            if (IsMainMenuOpen())
             {
-                if (radioPlayer != null && radioPlayer.IsPlaying)
-                    StopPlayback(showNotification: false);
+                StopPlayback(showNotification: false);
 
                 return;
             }
@@ -100,7 +100,7 @@ namespace ClientPlugin
             if (radioPlayer == null)
                 return;
 
-            if (!IsGameSessionReady())
+            if (IsMainMenuOpen() || MyAPIGateway.Session == null)
             {
                 manualStopRequested = true;
                 radioPlayer.Stop();
@@ -191,9 +191,17 @@ namespace ClientPlugin
             }
         }
 
-        private static bool IsGameSessionReady()
+        private static bool IsMainMenuOpen()
         {
-            return MyAPIGateway.Session?.Player?.Character != null;
+            try
+            {
+                return MyScreenManager.IsScreenOfTypeOpen(typeof(MyGuiScreenMainMenu));
+            }
+            catch (Exception ex)
+            {
+                MyLog.Default.WriteLine($"{Name}: main menu detection failed: {ex.Message}");
+                return MyAPIGateway.Session == null;
+            }
         }
     }
 }

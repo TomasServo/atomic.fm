@@ -3,6 +3,8 @@ using Sandbox.Game.Entities;
 using SpaceEngineers.Game.ModAPI;
 using System;
 using System.Collections.Generic;
+using Sandbox.Graphics.GUI;
+using SpaceEngineers.Game.GUI;
 using VRage.ModAPI;
 using VRage.Utils;
 using VRageMath;
@@ -37,7 +39,7 @@ namespace ClientPlugin
         {
             float baseVolume = Clamp01(config.Volume);
 
-            if (!IsGameSessionReady())
+            if (MyAPIGateway.Session == null || IsMainMenuOpen())
             {
                 lastPan = 0f;
                 lastVolumeMultiplier = 1f;
@@ -137,7 +139,7 @@ namespace ClientPlugin
         {
             position = Vector3D.Zero;
 
-            if (!IsGameSessionReady())
+            if (MyAPIGateway.Session == null || IsMainMenuOpen())
                 return false;
 
             if (MyAPIGateway.Session.Camera != null)
@@ -158,7 +160,7 @@ namespace ClientPlugin
         {
             right = Vector3D.Right;
 
-            if (!IsGameSessionReady())
+            if (MyAPIGateway.Session == null || IsMainMenuOpen())
                 return false;
 
             if (MyAPIGateway.Session.Camera != null)
@@ -175,9 +177,17 @@ namespace ClientPlugin
             return true;
         }
 
-        private static bool IsGameSessionReady()
+        private static bool IsMainMenuOpen()
         {
-            return MyAPIGateway.Session?.Player?.Character != null;
+            try
+            {
+                return MyScreenManager.IsScreenOfTypeOpen(typeof(MyGuiScreenMainMenu));
+            }
+            catch (Exception ex)
+            {
+                MyLog.Default.WriteLine($"{Plugin.Name}: main menu detection failed: {ex.Message}");
+                return MyAPIGateway.Session == null;
+            }
         }
 
         private void RefreshAnchors(string tag)
