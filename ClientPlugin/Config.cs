@@ -8,7 +8,7 @@ namespace ClientPlugin
 {
     public class Config : INotifyPropertyChanged
     {
-        public const float DefaultVolume = 0.15f;
+        public const float DefaultVolume = 0.03f;
         public const float StartupSafetyVolume = 0.03f;
         public const string DefaultStreamUrl = "http://radio.atomic.fm:8000/atomic-radio";
         public const int CurrentConfigVersion = 3;

@@ -57,4 +57,13 @@ if exist "D:\Pulsar\Legacy\Local" (
     copy /y "%~dp0PluginHub.xml" "D:\Pulsar\Legacy\Local\plugin.xml" >NUL
 )
 
+if exist "D:\Pulsar\Legacy\Local\Atomic-Radio" (
+    echo Copying plugin output to "D:\Pulsar\Legacy\Local\Atomic-Radio\"
+    copy /y "%SOURCE%\*.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\" >NUL
+    copy /y "%SOURCE%\*.pdb" "D:\Pulsar\Legacy\Local\Atomic-Radio\" >NUL 2>&1
+    copy /y "%SOURCE%\atomic.fm.dll" "D:\Pulsar\Legacy\Local\Atomic-Radio\plugin.dll" >NUL
+    copy /y "%SOURCE%\atomic.fm.pdb" "D:\Pulsar\Legacy\Local\Atomic-Radio\plugin.pdb" >NUL 2>&1
+    copy /y "%~dp0PluginHub.xml" "D:\Pulsar\Legacy\Local\Atomic-Radio\plugin.xml" >NUL
+)
+
 exit /b 0
