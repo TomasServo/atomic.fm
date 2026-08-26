@@ -39,7 +39,7 @@ namespace ClientPlugin
         {
             float baseVolume = Clamp01(config.Volume);
 
-            if (MyAPIGateway.Session == null || IsMainMenuOpen())
+            if (IsOpeningMenuActive())
             {
                 lastPan = 0f;
                 lastVolumeMultiplier = 1f;
@@ -139,7 +139,7 @@ namespace ClientPlugin
         {
             position = Vector3D.Zero;
 
-            if (MyAPIGateway.Session == null || IsMainMenuOpen())
+            if (IsOpeningMenuActive())
                 return false;
 
             if (MyAPIGateway.Session.Camera != null)
@@ -160,7 +160,7 @@ namespace ClientPlugin
         {
             right = Vector3D.Right;
 
-            if (MyAPIGateway.Session == null || IsMainMenuOpen())
+            if (IsOpeningMenuActive())
                 return false;
 
             if (MyAPIGateway.Session.Camera != null)
@@ -177,17 +177,9 @@ namespace ClientPlugin
             return true;
         }
 
-        private static bool IsMainMenuOpen()
+        private static bool IsOpeningMenuActive()
         {
-            try
-            {
-                return MyScreenManager.IsScreenOfTypeOpen(typeof(MyGuiScreenMainMenu));
-            }
-            catch (Exception ex)
-            {
-                MyLog.Default.WriteLine($"{Plugin.Name}: main menu detection failed: {ex.Message}");
-                return MyAPIGateway.Session == null;
-            }
+            return MyAPIGateway.Session == null;
         }
 
         private void RefreshAnchors(string tag)

@@ -54,7 +54,7 @@ namespace ClientPlugin
 
         public void Update()
         {
-            if (IsMainMenuOpen())
+            if (IsOpeningMenuActive())
             {
                 if (radioPlayer != null && radioPlayer.IsPlaying)
                 {
@@ -107,8 +107,8 @@ namespace ClientPlugin
             if (radioPlayer == null)
                 return;
 
-            bool isMainMenuOpen = IsMainMenuOpen();
-            if (!isMainMenuOpen && MyAPIGateway.Session == null)
+            bool isOpeningMenuActive = IsOpeningMenuActive();
+            if (!isOpeningMenuActive && MyAPIGateway.Session == null)
             {
                 manualStopRequested = true;
                 radioPlayer.Stop();
@@ -166,7 +166,7 @@ namespace ClientPlugin
         {
             if (radioPlayer != null)
             {
-                if (IsMainMenuOpen())
+                if (IsOpeningMenuActive())
                 {
                     framesUntilFullVolume = StartupQuietFrames;
                     radioPlayer.Volume = MainMenuVolume;
@@ -220,17 +220,9 @@ namespace ClientPlugin
             }
         }
 
-        private static bool IsMainMenuOpen()
+        private static bool IsOpeningMenuActive()
         {
-            try
-            {
-                return MyScreenManager.IsScreenOfTypeOpen(typeof(MyGuiScreenMainMenu));
-            }
-            catch (Exception ex)
-            {
-                MyLog.Default.WriteLine($"{Name}: main menu detection failed: {ex.Message}");
-                return MyAPIGateway.Session == null;
-            }
+            return MyAPIGateway.Session == null;
         }
     }
 }
