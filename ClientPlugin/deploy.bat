@@ -33,6 +33,7 @@ echo Copying plugin output from "%SOURCE%" to "%PLUGIN_DIR%\"
 for /l %%i in (1, 1, 10) do (
     copy /y "%SOURCE%\*.dll" "%PLUGIN_DIR%\" >NUL
     copy /y "%SOURCE%\*.pdb" "%PLUGIN_DIR%\" >NUL 2>&1
+    copy /y "%~dp0PluginHub.xml" "%PLUGIN_DIR%\plugin.xml" >NUL
 
     if !ERRORLEVEL! NEQ 0 (
         REM "timeout" requires input redirection which is not supported,
@@ -49,4 +50,11 @@ echo ERROR: Could not copy plugin output.
 exit /b 1
 
 :BREAK_LOOP
+if exist "D:\Pulsar\Legacy\Local" (
+    echo Copying plugin output to "D:\Pulsar\Legacy\Local\"
+    copy /y "%SOURCE%\*.dll" "D:\Pulsar\Legacy\Local\" >NUL
+    copy /y "%SOURCE%\*.pdb" "D:\Pulsar\Legacy\Local\" >NUL 2>&1
+    copy /y "%~dp0PluginHub.xml" "D:\Pulsar\Legacy\Local\plugin.xml" >NUL
+)
+
 exit /b 0
