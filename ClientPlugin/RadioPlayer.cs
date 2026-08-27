@@ -1,8 +1,7 @@
 using System;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 using VRage.Utils;
 
 namespace ClientPlugin
@@ -10,12 +9,16 @@ namespace ClientPlugin
     internal sealed class RadioPlayer : IDisposable
     {
         private readonly object syncRoot = new object();
-        private WaveOutEvent outputDevice;
-        private MediaFoundationReader reader;
-        private AtomicFmSampleProvider sampleProvider;
+        private object outputDevice;
+        private object reader;
+        private object waveChannel;
         private CancellationTokenSource startupCancellation;
         private float volume = Config.DefaultVolume;
         private float pan;
+        private Type waveOutType;
+        private Type mediaFoundationReaderType;
+        private Type waveChannel32Type;
+        private Type waveProviderType;
 
         public bool IsPlaying { get; private set; }
 
@@ -27,8 +30,7 @@ namespace ClientPlugin
                 volume = Clamp01(value);
                 lock (syncRoot)
                 {
-                    if (sampleProvider != null)
-                        sampleProvider.Volume = volume;
+                    SetStreamVolume(waveChannel, volume);
                 }
             }
         }
@@ -41,8 +43,7 @@ namespace ClientPlugin
                 pan = Clamp(value, -1f, 1f);
                 lock (syncRoot)
                 {
-                    if (sampleProvider != null)
-                        sampleProvider.Pan = pan;
+                    SetStreamPan(waveChannel, pan);
                 }
             }
         }
@@ -69,29 +70,27 @@ namespace ClientPlugin
             {
                 try
                 {
-                    AssemblyResolver.Register();
+                    EnsureAudioTypesLoaded();
                     token.ThrowIfCancellationRequested();
 
-                    var newReader = new MediaFoundationReader(streamUrl);
+                    var newReader = Activator.CreateInstance(mediaFoundationReaderType, streamUrl);
                     token.ThrowIfCancellationRequested();
 
-                    var newSampleProvider = new AtomicFmSampleProvider(new WaveToSampleProvider(newReader))
-                    {
-                        Volume = Volume,
-                        Pan = Pan
-                    };
+                    var newWaveChannel = Activator.CreateInstance(waveChannel32Type, newReader);
+                    SetStreamVolume(newWaveChannel, Volume);
+                    SetStreamPan(newWaveChannel, Pan);
 
-                    var newOutput = new WaveOutEvent();
-                    newOutput.Init(new SampleToWaveProvider(newSampleProvider));
+                    var newOutput = Activator.CreateInstance(waveOutType);
+                    waveOutType.GetMethod("Init", new[] { waveProviderType })?.Invoke(newOutput, new[] { newWaveChannel });
 
                     lock (syncRoot)
                     {
                         token.ThrowIfCancellationRequested();
                         reader = newReader;
-                        sampleProvider = newSampleProvider;
+                        waveChannel = newWaveChannel;
                         outputDevice = newOutput;
                         IsPlaying = true;
-                        newOutput.Play();
+                        waveOutType.GetMethod("Play")?.Invoke(newOutput, null);
                     }
 
                     MyLog.Default.WriteLineAndConsole($"{Plugin.Name}: Streaming {streamUrl}");
@@ -114,27 +113,67 @@ namespace ClientPlugin
             startupCancellation?.Dispose();
             startupCancellation = null;
 
-            WaveOutEvent outputToDispose;
-            MediaFoundationReader readerToDispose;
+            object outputToDispose;
+            object channelToDispose;
+            object readerToDispose;
 
             lock (syncRoot)
             {
                 IsPlaying = false;
                 outputToDispose = outputDevice;
+                channelToDispose = waveChannel;
                 readerToDispose = reader;
                 outputDevice = null;
+                waveChannel = null;
                 reader = null;
-                sampleProvider = null;
             }
 
-            outputToDispose?.Stop();
-            outputToDispose?.Dispose();
-            readerToDispose?.Dispose();
+            if (outputToDispose != null)
+            {
+                outputToDispose.GetType().GetMethod("Stop")?.Invoke(outputToDispose, null);
+                (outputToDispose as IDisposable)?.Dispose();
+            }
+
+            (channelToDispose as IDisposable)?.Dispose();
+            (readerToDispose as IDisposable)?.Dispose();
         }
 
         public void Dispose()
         {
             Stop();
+        }
+
+        private void EnsureAudioTypesLoaded()
+        {
+            if (waveOutType != null && mediaFoundationReaderType != null && waveChannel32Type != null && waveProviderType != null)
+                return;
+
+            AssemblyResolver.Register();
+
+            waveOutType = Type.GetType("NAudio.Wave.WaveOutEvent, NAudio.WinMM", true);
+            mediaFoundationReaderType = Type.GetType("NAudio.Wave.MediaFoundationReader, NAudio.Wasapi", true);
+            waveChannel32Type = Type.GetType("NAudio.Wave.WaveChannel32, NAudio.Core", true);
+            waveProviderType = Type.GetType("NAudio.Wave.IWaveProvider, NAudio.Core", true);
+        }
+
+        private static void SetStreamVolume(object stream, float requestedVolume)
+        {
+            SetFloatProperty(stream, "Volume", Clamp01(requestedVolume));
+        }
+
+        private static void SetStreamPan(object stream, float requestedPan)
+        {
+            SetFloatProperty(stream, "Pan", Clamp(requestedPan, -1f, 1f));
+        }
+
+        private static void SetFloatProperty(object target, string propertyName, float value)
+        {
+            if (target == null)
+                return;
+
+            var property = target.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+            if (property != null && property.CanWrite)
+                property.SetValue(target, value, null);
         }
 
         private static float Clamp01(float value)
@@ -149,54 +188,6 @@ namespace ClientPlugin
             if (value < min)
                 return min;
             return value > max ? max : value;
-        }
-
-        private sealed class AtomicFmSampleProvider : ISampleProvider
-        {
-            private readonly ISampleProvider source;
-
-            public AtomicFmSampleProvider(ISampleProvider source)
-            {
-                this.source = source ?? throw new ArgumentNullException(nameof(source));
-            }
-
-            public WaveFormat WaveFormat => source.WaveFormat;
-
-            public float Volume { get; set; } = 1f;
-
-            public float Pan { get; set; }
-
-            public int Read(float[] buffer, int offset, int count)
-            {
-                int samplesRead = source.Read(buffer, offset, count);
-                int channels = WaveFormat.Channels;
-                float volume = Clamp01(Volume);
-
-                if (channels < 2)
-                {
-                    for (int i = 0; i < samplesRead; i++)
-                        buffer[offset + i] *= volume;
-
-                    return samplesRead;
-                }
-
-                float pan = Clamp(Pan, -1f, 1f);
-                float leftGain = volume * (pan <= 0f ? 1f : 1f - pan);
-                float rightGain = volume * (pan >= 0f ? 1f : 1f + pan);
-
-                int end = offset + samplesRead;
-                for (int i = offset; i < end; i += channels)
-                {
-                    buffer[i] *= leftGain;
-                    if (i + 1 < end)
-                        buffer[i + 1] *= rightGain;
-
-                    for (int channel = 2; channel < channels && i + channel < end; channel++)
-                        buffer[i + channel] *= volume;
-                }
-
-                return samplesRead;
-            }
         }
     }
 }
