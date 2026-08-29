@@ -1,47 +1,82 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using ClientPlugin.Settings;
 using ClientPlugin.Settings.Layouts;
-using HarmonyLib;
 using Sandbox.Graphics.GUI;
+using Sandbox.ModAPI;
+using VRage.Input;
 using VRage.Plugins;
+using VRage.Utils;
 
-// Define assembly version when compiled by Pulsar
 #if !LOCAL_BUILD
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 #endif
-    
+
 namespace ClientPlugin;
 
 // ReSharper disable once UnusedType.Global
-public class Plugin : IPlugin
+public class Plugin : IPlugin, IDisposable
 {
-    public const string Name = "ClientPluginTemplate";
+    public const string Name = "atomic.fm";
     public static Plugin Instance { get; private set; }
+
     private SettingsGenerator settingsGenerator;
+    private RadioPlayer radioPlayer;
+    private SoundBlockRadioController soundBlockController;
+    private int framesUntilStatusNotification;
+    private int framesUntilAmbientScan;
+    private bool manualStopRequested;
+
+    private const int AmbientScanIntervalFrames = 300;
+
+    static Plugin()
+    {
+        AssemblyResolver.Register();
+    }
 
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
     public void Init(object gameInstance)
     {
         Instance = this;
-        Instance.settingsGenerator = new SettingsGenerator();
+        settingsGenerator = new SettingsGenerator();
+        radioPlayer = new RadioPlayer();
+        soundBlockController = new SoundBlockRadioController();
+        Config.Current.PropertyChanged += OnConfigChanged;
 
-        // TODO: Put your one time initialization code here.
-        var harmony = new Harmony(Name);
-        harmony.PatchAll(Assembly.GetExecutingAssembly());
+        if (Config.Current.Autoplay)
+            radioPlayer.Play(Config.Current.StreamUrl, Config.Current.Volume);
     }
 
     public void Dispose()
     {
-        // TODO: Save state and close resources here, called when the game exits (not guaranteed!)
-        // IMPORTANT: Do NOT call harmony.UnpatchAll() here! It may break other plugins.
-
+        Config.Current.PropertyChanged -= OnConfigChanged;
+        ConfigStorage.Save(Config.Current);
+        soundBlockController = null;
+        radioPlayer?.Dispose();
+        radioPlayer = null;
         Instance = null;
     }
 
     public void Update()
     {
-        // TODO: Put your update code here. It is called on every simulation frame!
+        if (MyInput.Static.IsAnyCtrlKeyPressed() &&
+            MyInput.Static.IsAnyAltKeyPressed() &&
+            MyInput.Static.IsNewKeyPressed(MyKeys.M))
+        {
+            TogglePlayback();
+        }
+
+        if (radioPlayer != null && radioPlayer.IsPlaying)
+        {
+            manualStopRequested = false;
+            radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+            radioPlayer.Pan = soundBlockController.LastPan;
+            ShowAnchorStatusPeriodically();
+            return;
+        }
+
+        TryStartAmbientPlayback();
     }
 
     // ReSharper disable once UnusedMember.Global
@@ -51,9 +86,97 @@ public class Plugin : IPlugin
         MyGuiSandbox.AddScreen(Instance.settingsGenerator.Dialog);
     }
 
-    //TODO: Uncomment and use this method to load asset files
-    /*public void LoadAssets(string folder)
+    public void TogglePlayback()
     {
+        if (radioPlayer == null)
+            return;
 
-    }*/
+        if (radioPlayer.IsPlaying)
+            StopPlayback();
+        else
+            StartPlayback();
+    }
+
+    public void StartPlayback()
+    {
+        if (radioPlayer == null)
+            return;
+
+        try
+        {
+            manualStopRequested = false;
+            framesUntilAmbientScan = AmbientScanIntervalFrames;
+            soundBlockController.ForceRefresh(Config.Current);
+            radioPlayer.Play(Config.Current.StreamUrl, Config.Current.Volume);
+            ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
+        }
+        catch (Exception ex)
+        {
+            MyLog.Default.Error($"{Name}: Failed to start stream: {ex}");
+            MyGuiSandbox.AddScreen(MyGuiSandbox.CreateMessageBox(
+                messageText: new System.Text.StringBuilder(ex.Message),
+                messageCaption: new System.Text.StringBuilder("atomic.fm")));
+        }
+    }
+
+    public void StopPlayback()
+    {
+        manualStopRequested = true;
+        radioPlayer?.Stop();
+        ShowNotification("atomic.fm stopped", 2000);
+    }
+
+    private void TryStartAmbientPlayback()
+    {
+        if (manualStopRequested || radioPlayer == null || radioPlayer.IsPlaying || !Config.Current.SoundBlockMode)
+            return;
+
+        if (--framesUntilAmbientScan > 0)
+            return;
+
+        framesUntilAmbientScan = AmbientScanIntervalFrames;
+        soundBlockController.ForceRefresh(Config.Current);
+        if (soundBlockController.AnchorCount <= 0)
+            return;
+
+        StartPlayback();
+    }
+
+    private void OnConfigChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (radioPlayer != null)
+        {
+            radioPlayer.Volume = soundBlockController.GetEffectiveVolume(Config.Current);
+            radioPlayer.Pan = soundBlockController.LastPan;
+        }
+    }
+
+    private void ShowAnchorStatusPeriodically()
+    {
+        if (--framesUntilStatusNotification > 0)
+            return;
+
+        framesUntilStatusNotification = 600;
+        if (soundBlockController.AnchorCount <= 0)
+        {
+            ShowNotification("atomic.fm: no block anchors found", 2500);
+            return;
+        }
+
+        ShowNotification(
+            $"atomic.fm: {soundBlockController.AnchorCount} anchor(s), nearest {soundBlockController.NearestAnchorDistance:0}m, volume {soundBlockController.LastVolumeMultiplier:0.00}, pan {soundBlockController.LastPan:0.00}",
+            2500);
+    }
+
+    private static void ShowNotification(string message, int aliveTimeMs)
+    {
+        try
+        {
+            MyAPIGateway.Utilities?.ShowNotification(message, aliveTimeMs, "White");
+        }
+        catch (Exception ex)
+        {
+            MyLog.Default.WriteLine($"{Name}: notification failed: {ex.Message}");
+        }
+    }
 }

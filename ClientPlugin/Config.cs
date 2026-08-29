@@ -1,119 +1,91 @@
 using ClientPlugin.Settings;
 using ClientPlugin.Settings.Elements;
-using Sandbox.Graphics.GUI;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using ClientPlugin.Settings.Tools;
-using VRage.Input;
-using VRageMath;
-
 
 namespace ClientPlugin;
 
-public enum ExampleEnum
-{
-    FirstAlpha,
-    SecondBeta,
-    ThirdGamma,
-    AndTheDelta,
-    Epsilon
-}
-
 public class Config : INotifyPropertyChanged
 {
+    public const float DefaultVolume = 1.0f;
+    public const float MaxVolume = 11.0f;
+
     #region Options
 
-    // TODO: Define your configuration options and their default values
-    private bool toggle = true;
-    private int integer = 2;
-    private float number = 0.1f;
-    private string text = "Default Text";
-    private ExampleEnum dropdown = ExampleEnum.FirstAlpha;
-    private Color color = Color.Cyan;
-    private Color colorWithAlpha = new Color(0.8f, 0.6f, 0.2f, 0.5f);
-    private Binding keybind = new Binding(MyKeys.None);
+    private string streamUrl = "http://radio.atomic.fm:8000/atomic-radio";
+    private float volume = DefaultVolume;
+    private bool autoplay;
+    private bool soundBlockMode = true;
+    private string soundBlockTag = "[atomic.fm]";
+    private float fallbackSpeakerRange = 50f;
+    private bool muteOutsideSpeakerRange;
 
     #endregion
 
     #region User interface
 
-    // TODO: Settings dialog title
-    public readonly string Title = "Config Demo";
+    public readonly string Title = "Atomic.FM";
 
-    [Separator("Some settings")]
-        
-    // TODO: Settings dialog controls, one property for each configuration option
-
-    [Checkbox(description: "Checkbox Tooltip")]
-    public bool Toggle
+    [Textbox("Stream URL", description: "HTTP or HTTPS MP3/AAC stream URL.")]
+    public string StreamUrl
     {
-        get => toggle;
-        set => SetField(ref toggle, value);
+        get => streamUrl;
+        set => SetField(ref streamUrl, value);
     }
 
-    [Slider(-1f, 10f, 1f, SliderAttribute.SliderType.Integer, description: "Integer Slider Tooltip")]
-    public int Integer
+    [Slider(0f, 11f, 0.1f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0 to 11.")]
+    public float Volume
     {
-        get => integer;
-        set => SetField(ref integer, value);
+        get => volume;
+        set => SetField(ref volume, value < 0f ? 0f : (value > MaxVolume ? MaxVolume : value));
     }
 
-    [Slider(-5f, 4.5f, 0.5f, SliderAttribute.SliderType.Float, description: "Float Slider Tooltip")]
-    public float Number
+    [Checkbox("Autoplay", description: "Start the configured stream when the plugin loads.")]
+    public bool Autoplay
     {
-        get => number;
-        set => SetField(ref number, value);
+        get => autoplay;
+        set => SetField(ref autoplay, value);
     }
 
-    [Textbox(description: "Textbox Tooltip")]
-    public string Text
+    [Checkbox("Block anchors", description: "Use blocks marked with atomic.fm=true in Custom Data as local radio speaker locations.")]
+    public bool SoundBlockMode
     {
-        get => text;
-        set => SetField(ref text, value);
+        get => soundBlockMode;
+        set => SetField(ref soundBlockMode, value);
     }
 
-    [Dropdown(description: "Dropdown Tooltip")]
-    public ExampleEnum Dropdown
+    [Textbox("Name fallback tag", description: "Blocks whose name contains this tag also act as atomic.fm anchors.")]
+    public string SoundBlockTag
     {
-        get => dropdown;
-        set => SetField(ref dropdown, value);
+        get => soundBlockTag;
+        set => SetField(ref soundBlockTag, value);
     }
 
-    [Separator("More settings")]
-        
-    [Color(description: "RGB color")]
-    public Color Color
+    [Slider(5f, 200f, 5f, SliderAttribute.SliderType.Float, label: "Fallback range", description: "Range in meters used when a marked block has no atomic.fm.range value.")]
+    public float FallbackSpeakerRange
     {
-        get => color;
-        set => SetField(ref color, value);
+        get => fallbackSpeakerRange;
+        set => SetField(ref fallbackSpeakerRange, value);
     }
 
-    [Color(hasAlpha: true, description: "RGBA color")]
-    public Color ColorWithAlpha
+    [Checkbox("Mute out of range", description: "Keep the stream running but mute it when no marked block anchor is nearby.")]
+    public bool MuteOutsideSpeakerRange
     {
-        get => colorWithAlpha;
-        set => SetField(ref colorWithAlpha, value);
+        get => muteOutsideSpeakerRange;
+        set => SetField(ref muteOutsideSpeakerRange, value);
     }
 
-    [Keybind(description: "Keybind Tooltip - Unbind by right clicking the button")]
-    public Binding Keybind
+    [Button("Start atomic.fm", description: "Start streaming the configured station.")]
+    public void StartRadio()
     {
-        get => keybind;
-        set => SetField(ref keybind, value);
+        Plugin.Instance?.StartPlayback();
     }
 
-    [Button(description: "Button Tooltip")]
-    public void Button()
+    [Button("Stop atomic.fm", description: "Stop radio playback.")]
+    public void StopRadio()
     {
-        MyGuiSandbox.AddScreen(MyGuiSandbox.CreateMessageBox(
-            MyMessageBoxStyleEnum.Info,
-            buttonType: MyMessageBoxButtonsType.OK,
-            messageText: new StringBuilder("You clicked me!"),
-            messageCaption: new StringBuilder("Custom Button Function"),
-            size: new Vector2(0.6f, 0.5f)
-        ));
+        Plugin.Instance?.StopPlayback();
     }
 
     #endregion

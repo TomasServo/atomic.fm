@@ -1,0 +1,15 @@
+<ezstream>
+  <url>http://localhost:8000/atomic-radio.mp3</url>
+  <sourcepassword>change-me</sourcepassword>
+  <format>MP3</format>
+  <filename>playlist.m3u</filename>
+  <stream_once>0</stream_once>
+  <svrinfoname>atomic.fm</svrinfoname>
+  <svrinfourl>http://localhost:8000/atomic-radio.mp3</svrinfourl>
+  <svrinfogenre>Space Engineers</svrinfogenre>
+  <svrinfodescription>atomic.fm test stream for Space Engineers.</svrinfodescription>
+  <svrinfobitrate>128</svrinfobitrate>
+  <svrinfochannels>2</svrinfochannels>
+  <svrinfosamplerate>44100</svrinfosamplerate>
+  <svrinfopublic>0</svrinfopublic>
+</ezstream>
