@@ -1,0 +1,30 @@
+<ezstream>
+    <servers>
+        <server>
+            <name>icecast</name>
+            <protocol>HTTP</protocol>
+            <hostname>localhost</hostname>
+            <port>8000</port>
+            <user>source</user>
+            <password>change-me</password>
+            <reconnect_attempts>60</reconnect_attempts>
+        </server>
+    </servers>
+    <streams>
+        <stream>
+            <mountpoint>/atomic-radio.mp3</mountpoint>
+            <intake>files</intake>
+            <server>icecast</server>
+            <public>No</public>
+            <format>MP3</format>
+        </stream>
+    </streams>
+    <intakes>
+        <intake>
+            <name>files</name>
+            <type>playlist</type>
+            <filename>__RUNTIME__/playlist.m3u</filename>
+            <stream_once>No</stream_once>
+        </intake>
+    </intakes>
+</ezstream>
