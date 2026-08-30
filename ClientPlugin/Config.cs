@@ -1,5 +1,6 @@
 using ClientPlugin.Settings;
 using ClientPlugin.Settings.Elements;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -34,11 +35,20 @@ public class Config : INotifyPropertyChanged
         set => SetField(ref streamUrl, value);
     }
 
-    [Slider(0f, 11f, 0.1f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0 to 11.")]
+    [Slider(0f, 11f, 0.1f, SliderAttribute.SliderType.Float, label: "Volume", description: "Playback volume from 0.0 to 11.0 (decimals allowed, e.g. 1.5).")]
     public float Volume
     {
         get => volume;
-        set => SetField(ref volume, value < 0f ? 0f : (value > MaxVolume ? MaxVolume : value));
+        set => SetField(ref volume, ClampVolume(value));
+    }
+
+    internal static float ClampVolume(float value)
+    {
+        if (value < 0f)
+            return 0f;
+        if (value > MaxVolume)
+            return MaxVolume;
+        return (float)Math.Round(value, 1, MidpointRounding.AwayFromZero);
     }
 
     [Checkbox("Autoplay", description: "Start the configured stream when the plugin loads.")]

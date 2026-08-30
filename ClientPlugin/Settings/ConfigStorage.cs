@@ -31,7 +31,11 @@ public static class ConfigStorage
         try
         {
             using (var streamReader = File.OpenText(path))
-                return (Config)xmlSerializer.Deserialize(streamReader) ?? Config.Default;
+            {
+                var config = (Config)xmlSerializer.Deserialize(streamReader) ?? Config.Default;
+                NormalizeVolume(config);
+                return config;
+            }
         }
         catch (Exception)
         {
@@ -40,5 +44,15 @@ public static class ConfigStorage
             
         return Config.Default;
     }
-        
+
+    /// <summary>
+    /// Clamp volume to 0.0–11.0 and snap to one decimal place (e.g. 1.5).
+    /// </summary>
+    private static void NormalizeVolume(Config config)
+    {
+        if (config == null)
+            return;
+
+        config.Volume = Config.ClampVolume(config.Volume);
+    }
 }
