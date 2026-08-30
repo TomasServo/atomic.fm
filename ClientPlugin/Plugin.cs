@@ -9,8 +9,8 @@ using VRage.Plugins;
 using VRage.Utils;
 
 #if !LOCAL_BUILD
-[assembly: AssemblyVersion("1.3.2.0")]
-[assembly: AssemblyFileVersion("1.3.2.0")]
+[assembly: AssemblyVersion("1.3.3.0")]
+[assembly: AssemblyFileVersion("1.3.3.0")]
 #endif
 
 namespace ClientPlugin;
@@ -163,9 +163,9 @@ public class Plugin : IPlugin, IDisposable
             return;
         }
 
-        // Show configured 0.0–11.0 volume, not distance-attenuated playback gain.
+        // Always show plugin setting on the 0–11 scale (never distance fade 0–1).
         ShowNotification(
-            $"atomic.fm: {soundBlockController.AnchorCount} anchor(s), nearest {soundBlockController.NearestAnchorDistance:0}m, volume {Config.Current.Volume:0.0}/{Config.MaxVolume:0.0}, pan {soundBlockController.LastPan:0.00}",
+            $"atomic.fm v1.3.3: {soundBlockController.AnchorCount} anchor(s), {soundBlockController.NearestAnchorDistance:0}m, vol {Config.Current.Volume:0.0} of 11, pan {soundBlockController.LastPan:0.00}",
             2500);
     }
 
