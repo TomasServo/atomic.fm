@@ -14,8 +14,11 @@ namespace ClientPlugin
     internal sealed class SoundBlockRadioController
     {
         private const string CustomDataKey = "atomic.fm";
+        private const string CustomDataEnabledKey = "enabled";
         private const string CustomDataRangeKey = "atomic.fm.range";
+        private const string CustomDataShortRangeKey = "range";
         private const string CustomDataVolumeKey = "atomic.fm.volume";
+        private const string CustomDataShortVolumeKey = "volume";
         private const int ScanIntervalFrames = 60;
         private readonly HashSet<IMyEntity> entities = new HashSet<IMyEntity>();
         private readonly List<IMyTerminalBlock> anchors = new List<IMyTerminalBlock>();
@@ -244,7 +247,7 @@ namespace ClientPlugin
                 return Math.Max(1f, soundBlock.Range);
 
             float customRange;
-            if (TryGetCustomDataFloat(anchor.CustomData, CustomDataRangeKey, out customRange))
+            if (TryGetCustomDataFloat(anchor.CustomData, CustomDataRangeKey, CustomDataShortRangeKey, out customRange))
                 return Math.Max(1f, customRange);
 
             return Math.Max(1f, fallbackRange);
@@ -253,8 +256,8 @@ namespace ClientPlugin
         private static float GetAnchorVolume(IMyTerminalBlock anchor)
         {
             float customVolume;
-            if (TryGetCustomDataFloat(anchor.CustomData, CustomDataVolumeKey, out customVolume))
-                return Config.VolumeToGain(customVolume);
+            if (TryGetCustomDataFloat(anchor.CustomData, CustomDataVolumeKey, CustomDataShortVolumeKey, out customVolume))
+                return VolumeSettingToGain(customVolume);
 
             IMySoundBlock soundBlock = anchor as IMySoundBlock;
             return soundBlock != null ? Clamp01(soundBlock.Volume) : 0.5f;
@@ -265,46 +268,56 @@ namespace ClientPlugin
             if (string.IsNullOrWhiteSpace(customData))
                 return false;
 
-            string[] lines = customData.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-            foreach (string rawLine in lines)
+            foreach (CustomDataEntry entry in ReadCustomDataEntries(customData))
             {
-                string line = rawLine.Trim();
-                if (line.Length == 0 || line.StartsWith("#") || line.StartsWith(";") || line.StartsWith("//"))
+                bool isExplicitKey = entry.Key.Equals(CustomDataKey, StringComparison.OrdinalIgnoreCase);
+                bool isSectionEnabled = entry.Section.Equals(CustomDataKey, StringComparison.OrdinalIgnoreCase) &&
+                    entry.Key.Equals(CustomDataEnabledKey, StringComparison.OrdinalIgnoreCase);
+                if (!isExplicitKey && !isSectionEnabled)
                     continue;
 
-                int separatorIndex = line.IndexOf('=');
-                if (separatorIndex < 0)
-                    separatorIndex = line.IndexOf(':');
-
-                if (separatorIndex < 0)
-                    continue;
-
-                string key = line.Substring(0, separatorIndex).Trim();
-                if (!key.Equals(CustomDataKey, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                string value = line.Substring(separatorIndex + 1).Trim();
-                return value.Equals("true", StringComparison.OrdinalIgnoreCase) ||
-                    value.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
-                    value.Equals("on", StringComparison.OrdinalIgnoreCase) ||
-                    value.Equals("1", StringComparison.OrdinalIgnoreCase);
+                return IsTruthy(entry.Value);
             }
 
             return false;
         }
 
-        private static bool TryGetCustomDataFloat(string customData, string expectedKey, out float value)
+        private static bool TryGetCustomDataFloat(string customData, string fullKey, string sectionKey, out float value)
         {
             value = 0f;
             if (string.IsNullOrWhiteSpace(customData))
                 return false;
 
+            foreach (CustomDataEntry entry in ReadCustomDataEntries(customData))
+            {
+                bool isFullKey = entry.Key.Equals(fullKey, StringComparison.OrdinalIgnoreCase);
+                bool isSectionKey = entry.Section.Equals(CustomDataKey, StringComparison.OrdinalIgnoreCase) &&
+                    entry.Key.Equals(sectionKey, StringComparison.OrdinalIgnoreCase);
+                if (!isFullKey && !isSectionKey)
+                    continue;
+
+                string rawValue = entry.Value.Replace(',', '.');
+                return float.TryParse(rawValue, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out value);
+            }
+
+            return false;
+        }
+
+        private static IEnumerable<CustomDataEntry> ReadCustomDataEntries(string customData)
+        {
+            string section = string.Empty;
             string[] lines = customData.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
             foreach (string rawLine in lines)
             {
                 string line = rawLine.Trim();
                 if (line.Length == 0 || line.StartsWith("#") || line.StartsWith(";") || line.StartsWith("//"))
                     continue;
+
+                if (line.StartsWith("[") && line.EndsWith("]") && line.Length > 2)
+                {
+                    section = line.Substring(1, line.Length - 2).Trim();
+                    continue;
+                }
 
                 int separatorIndex = line.IndexOf('=');
                 if (separatorIndex < 0)
@@ -313,15 +326,31 @@ namespace ClientPlugin
                 if (separatorIndex < 0)
                     continue;
 
-                string key = line.Substring(0, separatorIndex).Trim();
-                if (!key.Equals(expectedKey, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                string rawValue = line.Substring(separatorIndex + 1).Trim();
-                return float.TryParse(rawValue, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out value);
+                yield return new CustomDataEntry
+                {
+                    Section = section,
+                    Key = line.Substring(0, separatorIndex).Trim(),
+                    Value = line.Substring(separatorIndex + 1).Trim()
+                };
             }
+        }
 
-            return false;
+        private static bool IsTruthy(string value)
+        {
+            return value.Equals("true", StringComparison.OrdinalIgnoreCase) ||
+                value.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
+                value.Equals("on", StringComparison.OrdinalIgnoreCase) ||
+                value.Equals("1", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static float VolumeSettingToGain(float userVolume)
+        {
+            if (userVolume < 0f)
+                userVolume = 0f;
+            if (userVolume > 10f)
+                userVolume = 10f;
+
+            return userVolume / 10f;
         }
 
         private static float Smooth(float current, float target, float factor)
@@ -341,6 +370,13 @@ namespace ClientPlugin
             if (value < min)
                 return min;
             return value > max ? max : value;
+        }
+
+        private struct CustomDataEntry
+        {
+            public string Section;
+            public string Key;
+            public string Value;
         }
     }
 }

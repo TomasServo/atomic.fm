@@ -20,12 +20,9 @@ namespace ClientPlugin
         private SoundBlockRadioController soundBlockController;
         private int framesUntilStatusNotification;
         private int framesUntilAmbientScan;
-        private int framesUntilFullVolume;
         private bool manualStopRequested = true;
 
         private const int AmbientScanIntervalFrames = 300;
-        private const int StartupQuietFrames = 600;
-        private const float StartupSafetyVolume = Config.StartupSafetyVolume;
 
         static Plugin()
         {
@@ -118,10 +115,9 @@ namespace ClientPlugin
             try
             {
                 manualStopRequested = false;
-                framesUntilFullVolume = StartupQuietFrames;
                 framesUntilAmbientScan = AmbientScanIntervalFrames;
                 soundBlockController.ForceRefresh(Config.Current);
-                radioPlayer.Play(Config.Current.StreamUrl, StartupSafetyVolume);
+                radioPlayer.Play(Config.Current.StreamUrl, GetCurrentPlaybackVolume());
                 ShowNotification($"atomic.fm starting - anchors found: {soundBlockController.AnchorCount}", 3000);
             }
             catch (Exception ex)
@@ -168,8 +164,7 @@ namespace ClientPlugin
             {
                 if (IsOpeningMenuActive())
                 {
-                    framesUntilFullVolume = StartupQuietFrames;
-                    radioPlayer.Volume = StartupSafetyVolume;
+                    radioPlayer.Volume = 0f;
                     radioPlayer.Pan = 0f;
                     return;
                 }
@@ -181,14 +176,7 @@ namespace ClientPlugin
 
         private float GetCurrentPlaybackVolume()
         {
-            float configuredVolume = soundBlockController.GetEffectiveVolume(Config.Current);
-            if (framesUntilFullVolume > 0)
-            {
-                framesUntilFullVolume--;
-                return Math.Min(configuredVolume, Config.StartupSafetyVolume);
-            }
-
-            return configuredVolume;
+            return soundBlockController.GetEffectiveVolume(Config.Current);
         }
 
         private void ShowAnchorStatusPeriodically()

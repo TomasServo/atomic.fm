@@ -12,7 +12,16 @@ Internet radio for Space Engineers through Pulsar.
 ```text
 atomic.fm=true
 atomic.fm.range=35
-atomic.fm.volume=3
+atomic.fm.volume=5.5
+```
+
+Or use section format:
+
+```text
+[atomic.fm]
+enabled=true
+range=35
+volume=5.5
 ```
 
 5. Press `Ctrl+Alt+M` or use **Start atomic.fm** in plugin settings. Stand near the block to hear it.
@@ -23,11 +32,12 @@ Any terminal block with Custom Data can be a radio source. Planters, lights, LCD
 
 - `Ctrl+Alt+M`: toggle playback
 - `atomic.fm.range`: hearing range in meters
-- `atomic.fm.volume`: block volume from `1` to `10`; start around `3`
+- `atomic.fm.volume`: block volume from `0` to `10`; decimals such as `1.5` and `5.5` work
+- `[atomic.fm]` section keys can use `enabled`, `range`, and `volume`
 - atomic.fm is off when the game starts.
-- Default plugin volume is `1` on the `1-10` scale.
-- Startup, loading, sector transitions, and the opening menu stay quiet.
-- Players can raise and save the volume from plugin settings after startup.
+- Default plugin volume is `10` on the `1-10` scale.
+- The stream uses the configured volume immediately after startup.
+- The opening menu stays silent.
 
 ## Notes
 
