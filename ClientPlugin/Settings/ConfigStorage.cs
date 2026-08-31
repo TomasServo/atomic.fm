@@ -55,9 +55,9 @@ namespace ClientPlugin.Settings
                 config.StreamUrl = Config.DefaultStreamUrl;
 
             if (oldConfig && config.Volume > 0f && config.Volume <= 1f)
-                config.Volume = Math.Max(1f, (float)Math.Round(config.Volume * 10f));
+                config.Volume = Math.Max(0f, (float)Math.Round(config.Volume * 11f, 2));
 
-            if (config.Volume < 1f || config.Volume > 10f)
+            if (config.Volume < 0f || config.Volume > 11f)
                 config.Volume = Config.DefaultVolume;
 
             config.ConfigVersion = Config.CurrentConfigVersion;

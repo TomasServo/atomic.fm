@@ -347,10 +347,10 @@ namespace ClientPlugin
         {
             if (userVolume < 0f)
                 userVolume = 0f;
-            if (userVolume > 10f)
-                userVolume = 10f;
+            if (userVolume > 11f)
+                userVolume = 11f;
 
-            return userVolume / 10f;
+            return userVolume / 11f;
         }
 
         private static float Smooth(float current, float target, float factor)

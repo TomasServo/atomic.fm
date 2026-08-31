@@ -19,7 +19,7 @@ All Ultralounge all the time.
 
 atomic.fm brings live internet radio, music, and ambient station audio to Space Engineers through Pulsar. Tune into an Icecast stream in the client, or turn almost any terminal block into a spatial radio source by adding atomic.fm=true to Custom Data.
 
-Use it for lounges, bars, ships, stations, hangars, stores, events, faction bases, and server communities that want music without adding a server mod. Optional per-block settings include atomic.fm.range=35 and atomic.fm.volume=5.5. Ctrl+Alt+M toggles playback manually. Audio is client-side, so each player chooses whether to install, enable, and hear atomic.fm.
+Use it for lounges, bars, ships, stations, hangars, stores, events, faction bases, and server communities that want music without adding a server mod. Optional per-block settings include atomic.fm.range=35 and atomic.fm.volume=5.5 on a 0-11 scale. Ctrl+Alt+M toggles playback manually. Audio is client-side, so each player chooses whether to install, enable, and hear atomic.fm.
 '@
 
 function Invoke-Git {
