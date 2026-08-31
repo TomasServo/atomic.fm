@@ -1,0 +1,86 @@
+{
+  "name": "atomic-fm",
+  "description": "If-then help menu for Atomic.FM — click a button, get the next step.",
+  "start": "root",
+  "nodes": {
+    "root": {
+      "title": "Atomic.FM",
+      "content": "Need help with the in-game radio plugin? Pick a path. Each button is an **if you want this, then…** step.",
+      "buttons": [
+        { "id": "listen", "label": "I want to listen in-game", "style": "primary", "then": "listen" },
+        { "id": "stream", "label": "I just need the stream URL", "style": "secondary", "then": "stream" },
+        { "id": "broken", "label": "It's not playing", "style": "danger", "then": "broken" },
+        {
+          "id": "dj",
+          "label": "DJ tools",
+          "style": "success",
+          "then": "dj",
+          "if": { "has_any_role": ["DJ", "Admin"] }
+        }
+      ]
+    },
+    "listen": {
+      "title": "Listen in Space Engineers",
+      "content": "If you want the station in-game, then:\n1. Install **Atomic.FM** in Pulsar and enable it.\n2. Open a block that has **Custom Data** (not plain armor).\n3. Paste the config, then stand near the block.\n\nWhat kind of block are you using?",
+      "buttons": [
+        { "id": "sound", "label": "Sound Block", "style": "primary", "then": "sound_block" },
+        { "id": "other", "label": "Another block with Custom Data", "style": "secondary", "then": "other_block" },
+        { "id": "home", "label": "Back", "then": "root" }
+      ]
+    },
+    "sound_block": {
+      "title": "Sound Block",
+      "content": "If you picked a Sound Block, then paste this into Custom Data:\n```\natomic.fm=true\natomic.fm.range=35\natomic.fm.volume=1.5\n```\nRange is meters. Volume is `0.0`–`11.0`. Toggle playback with **Ctrl+Alt+M**.",
+      "buttons": [
+        { "id": "still_broken", "label": "Still silent", "style": "danger", "then": "broken" },
+        { "id": "home", "label": "Done", "style": "success", "then": "root" }
+      ]
+    },
+    "other_block": {
+      "title": "Any Custom Data block",
+      "content": "If the block has Custom Data, then the same keys work — Sound Block is not required.\n```\natomic.fm=true\natomic.fm.range=35\natomic.fm.volume=1.5\n```\nIf you hear nothing, the block has no Custom Data (armor) or you are outside `atomic.fm.range`.",
+      "buttons": [
+        { "id": "still_broken", "label": "Still silent", "style": "danger", "then": "broken" },
+        { "id": "home", "label": "Done", "style": "success", "then": "root" }
+      ]
+    },
+    "stream": {
+      "title": "Stream URL",
+      "content": "If you only need the audio, then use:\n`http://radio.atomic.fm:8000/atomic-radio`",
+      "buttons": [
+        { "id": "home", "label": "Back", "then": "root" }
+      ]
+    },
+    "broken": {
+      "title": "It's not playing",
+      "content": "If the radio is silent, then pick the closest match.",
+      "buttons": [
+        { "id": "no_config", "label": "I never set Custom Data", "style": "primary", "then": "listen" },
+        { "id": "outside", "label": "I am far from the block", "style": "secondary", "then": "range" },
+        { "id": "quiet", "label": "I hear it, but it's quiet", "style": "secondary", "then": "volume" },
+        { "id": "home", "label": "Back", "then": "root" }
+      ]
+    },
+    "range": {
+      "title": "Range",
+      "content": "If you walked away, then you left `atomic.fm.range` (default 35 m). Raise it in Custom Data, e.g. `atomic.fm.range=80`.",
+      "buttons": [
+        { "id": "home", "label": "Back to start", "then": "root" }
+      ]
+    },
+    "volume": {
+      "title": "Volume",
+      "content": "If it is too quiet, then raise `atomic.fm.volume` (up to `11.0`) and check the in-game HUD volume. **Ctrl+Alt+M** toggles playback.",
+      "buttons": [
+        { "id": "home", "label": "Back to start", "then": "root" }
+      ]
+    },
+    "dj": {
+      "title": "DJ tools",
+      "content": "If you have the DJ or Admin role, then you see this node. Put Icecast / playlist notes here.",
+      "buttons": [
+        { "id": "home", "label": "Back", "then": "root" }
+      ]
+    }
+  }
+}
