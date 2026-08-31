@@ -18,6 +18,7 @@ namespace ClientPlugin
         private readonly HashSet<IMyEntity> entities = new HashSet<IMyEntity>();
         private readonly List<IMyTerminalBlock> anchors = new List<IMyTerminalBlock>();
         private int framesUntilScan;
+        private float lastAudibleVolume = -1f;
         private float lastVolumeMultiplier = 1f;
         private float lastPan;
 
@@ -40,20 +41,31 @@ namespace ClientPlugin
             if (!config.SoundBlockMode)
             {
                 lastPan = 0f;
+                lastAudibleVolume = baseVolume;
+                lastVolumeMultiplier = 1f;
                 return baseVolume;
             }
 
-            float multiplier = GetSpeakerMultiplier(config);
-            lastVolumeMultiplier = Smooth(lastVolumeMultiplier, multiplier, 0.15f);
-            return baseVolume * lastVolumeMultiplier;
+            float targetVolume = GetSpeakerPlaybackVolume(config);
+            if (lastAudibleVolume < 0f)
+                lastAudibleVolume = targetVolume;
+            else
+                lastAudibleVolume = Smooth(lastAudibleVolume, targetVolume, 0.15f);
+
+            lastVolumeMultiplier = Config.MaxVolume <= 0f ? 0f : Clamp01(lastAudibleVolume / Config.MaxVolume);
+            return Clamp(lastAudibleVolume, 0f, Config.MaxVolume);
         }
 
-        private float GetSpeakerMultiplier(Config config)
+        /// <summary>
+        /// Returns the audible level on the 0–11 scale for the strongest in-range anchor.
+        /// Block Custom Data <c>atomic.fm.volume</c> is a real 0–11 level (not a 0–1 fade).
+        /// </summary>
+        private float GetSpeakerPlaybackVolume(Config config)
         {
             if (MyAPIGateway.Session == null || MyAPIGateway.Session.Camera == null)
             {
                 lastPan = 0f;
-                return 1f;
+                return Clamp(config.Volume, 0f, Config.MaxVolume);
             }
 
             if (--framesUntilScan <= 0)
@@ -65,7 +77,7 @@ namespace ClientPlugin
             if (anchors.Count == 0)
             {
                 lastPan = 0f;
-                return config.MuteOutsideSpeakerRange ? 0f : 1f;
+                return config.MuteOutsideSpeakerRange ? 0f : Clamp(config.Volume, 0f, Config.MaxVolume);
             }
 
             Vector3D listenerPosition = MyAPIGateway.Session.Camera.Position;
@@ -96,11 +108,11 @@ namespace ClientPlugin
                     continue;
 
                 float distanceFactor = 1f - (float)(distance / range);
-                float anchorVolume = GetAnchorVolume(anchor);
-                float score = distanceFactor * anchorVolume;
-                if (score > strongest)
+                float blockVolume = GetBlockPlaybackVolume(anchor, config);
+                float audible = distanceFactor * blockVolume;
+                if (audible > strongest)
                 {
-                    strongest = score;
+                    strongest = audible;
                     selectedPan = CalculatePan(listenerPosition, anchor.GetPosition());
                 }
             }
@@ -108,7 +120,7 @@ namespace ClientPlugin
             NearestAnchorName = nearestName;
             NearestAnchorDistance = nearestDistance == double.MaxValue ? 0d : nearestDistance;
             lastPan = strongest > 0f ? selectedPan : 0f;
-            return Clamp01(strongest);
+            return Clamp(strongest, 0f, Config.MaxVolume);
         }
 
         private static float CalculatePan(Vector3D listenerPosition, Vector3D anchorPosition)
@@ -191,14 +203,21 @@ namespace ClientPlugin
             return Math.Max(1f, fallbackRange);
         }
 
-        private static float GetAnchorVolume(IMyTerminalBlock anchor)
+        /// <summary>
+        /// Playback level for this block on the 0–11 scale.
+        /// Prefers Custom Data atomic.fm.volume, else the sound-block slider, else plugin config volume.
+        /// </summary>
+        private static float GetBlockPlaybackVolume(IMyTerminalBlock anchor, Config config)
         {
             float customVolume;
             if (TryGetCustomDataFloat(anchor.CustomData, CustomDataVolumeKey, out customVolume))
-                return Clamp(customVolume, 0f, Config.MaxVolume) / Config.MaxVolume;
+                return Clamp(customVolume, 0f, Config.MaxVolume);
 
             IMySoundBlock soundBlock = anchor as IMySoundBlock;
-            return soundBlock != null ? Clamp01(soundBlock.Volume) : 1f;
+            if (soundBlock != null)
+                return Clamp01(soundBlock.Volume) * Config.MaxVolume;
+
+            return Clamp(config.Volume, 0f, Config.MaxVolume);
         }
 
         private static bool HasEnabledCustomData(string customData)

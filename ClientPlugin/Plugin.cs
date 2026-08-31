@@ -9,8 +9,8 @@ using VRage.Plugins;
 using VRage.Utils;
 
 #if !LOCAL_BUILD
-[assembly: AssemblyVersion("1.3.3.0")]
-[assembly: AssemblyFileVersion("1.3.3.0")]
+[assembly: AssemblyVersion("1.3.4.0")]
+[assembly: AssemblyFileVersion("1.3.4.0")]
 #endif
 
 namespace ClientPlugin;
@@ -163,9 +163,10 @@ public class Plugin : IPlugin, IDisposable
             return;
         }
 
-        // Always show plugin setting on the 0–11 scale (never distance fade 0–1).
+        // Show audible level (block volume × distance) on the 0–11 scale.
+        float audible = radioPlayer != null ? radioPlayer.Volume : Config.Current.Volume;
         ShowNotification(
-            $"atomic.fm v1.3.3: {soundBlockController.AnchorCount} anchor(s), {soundBlockController.NearestAnchorDistance:0}m, vol {Config.Current.Volume:0.0} of 11, pan {soundBlockController.LastPan:0.00}",
+            $"atomic.fm v1.3.4: {soundBlockController.AnchorCount} anchor(s), {soundBlockController.NearestAnchorDistance:0}m, vol {audible:0.0} of 11, pan {soundBlockController.LastPan:0.00}",
             2500);
     }
 
