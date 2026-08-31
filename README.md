@@ -25,3 +25,7 @@ Plain armor blocks do not work — they have no Custom Data.
 - `atomic.fm.volume` — block volume (`0.0`–`11.0`, decimals allowed)
 
 Default stream: `http://radio.atomic.fm:8000/atomic-radio`
+
+## Discord if-then menu
+
+A JSON button script for community help lives in `discord/`. `/ifthen` posts the tree; each button is *if you click this, then show that node*. See `discord/README.md`.
