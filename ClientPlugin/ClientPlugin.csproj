@@ -237,6 +237,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Template Harmony/Cecil helpers are not used by atomic.fm -->
+    <Compile Remove="Tools\TranspilerHelpers.cs" />
+    <Compile Remove="Tools\PreloaderHelpers.cs" />
+    <Compile Remove="Patches\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NAudio" Version="2.2.1" />
     <!-- Uncomment to enable publicizer support  
     <PackageReference Include="Krafs.Publicizer" Version="2.3.0">
